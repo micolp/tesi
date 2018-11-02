@@ -5,14 +5,48 @@ class Pipeline:
     def __init__(self):
         self.filters_list = []
 
-    def process(self, image):
+    def process(self, image, verbose=False):
         for filter in self.filters_list:
-            image = filter.apply(image)
+            try:
+                image = filter.apply(image)
+            except RuntimeError as error:
+                if verbose:
+                    print(filter.get_description())
+                    print("Error: " + str(error))
+            except ValueError as error:
+                if verbose:
+                    print(filter.get_description())
+                    print("Error: " + str(error))
         return image
 
     def add_filter(self, filter):
         self.filters_list.append(filter)
 
+    def get_length(self):
+        return len(self.filters_list)
+
+    # index: da quale indice partire - offset: lunghezza subpipe
+    def get_subpipeline(self, index, offset=None):
+        result = Pipeline()
+        if offset:
+            result.filters_list = self.filters_list[index:index+offset]
+        else:
+            result.filters_list = self.filters_list[index:]
+        # ritorna pipeline da: index, di lunghezza offset
+        return result
+
+    def get_description(self):
+        description = ""
+        for filter in self.filters_list:
+            description += filter.get_description() + "\n"
+            description += "--------------------\n"
+        return description
+
+    # override di add (+) per istanze di Pipeline
+    def __add__(self, pipeline):
+        result = Pipeline()
+        result.filters_list = self.filters_list + pipeline.filters_list
+        return result
 
 class Sobel:
     def __init__(self):
@@ -137,10 +171,10 @@ class Frangi:
     def __init__(self):
         self.filter = filters.frangi
         self.scale_range = (1, 10)
-        self.scale_step = 2
-        self.beta1 = 0.5
-        self.beta2 = 15
-        self.black_ridges = True  # T detects black ridges, F white
+        self.scale_step = 0.1
+        self.beta1 = 3
+        self.beta2 = 4
+        self.black_ridges = False# T detects black ridges, F white
 
     def apply(self, image):
         frangi = self.filter(image, scale_range=self.scale_range, scale_step=self.scale_step, beta1=self.beta1,
@@ -164,4 +198,4 @@ class Frangi:
 edge_detector_set = (Sobel, Roberts, Prewitt, Scharr)
 threshold_set = (ThresholdLocal, ThresholdGlobal)
 misc_set = (Frangi, Frangi)
-category_set = (edge_detector_set, threshold_set, misc_set)
+category_set = (edge_detector_set, threshold_set)#, misc_set)

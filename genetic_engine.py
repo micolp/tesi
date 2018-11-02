@@ -2,7 +2,7 @@ from random import random
 from random import randint
 
 
-class SimpleGeneticAlgorithm:
+class GeneticEngine:
     def __init__(self,
                  generate,  #crea individui pop iniziale
                  mutate,  #crea mutazione genetica casuale
@@ -33,7 +33,7 @@ class SimpleGeneticAlgorithm:
     def evolve(self, generation_count):
         for g in range(generation_count):
             graded = [(self.fitness(x), x) for x in self.population]
-            graded = [x[1] for x in reversed(sorted(graded))]
+            graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
             survived_population_size = int(len(graded) * self.survival_rate)
             parents = graded[0:survived_population_size]
 
@@ -64,12 +64,12 @@ class SimpleGeneticAlgorithm:
 
     def get_graded_population(self):
         graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in reversed(sorted(graded))]
+        graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
         return graded
 
     def get_best_individual(self):
         graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in reversed(sorted(graded))]
+        graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
         return graded[0]
 
     def get_population_grade(self):
