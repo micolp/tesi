@@ -5,7 +5,7 @@ class Pipeline:
     def __init__(self):
         self.filters_list = []
 
-    def process(self, image, verbose=False):
+    def process(self, image, normalize=False, verbose=False):
         for filter in self.filters_list:
             try:
                 image = filter.apply(image)
@@ -17,10 +17,29 @@ class Pipeline:
                 if verbose:
                     print(filter.get_description())
                     print("Error: " + str(error))
+        if normalize:
+            image -= image.min()
+            max_image = image.max()
+            if max_image != 0:
+                try:
+                    image = image * (1.0 / max_image)
+                except TypeError as error:
+                    print("Error: " + str(error))
+                    print(type(image))
+                    print(max_image)
+                    print(image.min())
+                    print(type(max_image)) # int32
+                    print(type(1.0 / max_image)) # float64
         return image
 
-    def add_filter(self, filter):
-        self.filters_list.append(filter)
+    def add_filter(self, filter, index=None):
+        if index is None:
+            self.filters_list.append(filter)
+        else:
+            self.filters_list.insert(index, filter)
+
+    def remove_filter(self, index):
+        del self.filters_list[index]
 
     def get_length(self):
         return len(self.filters_list)
@@ -75,7 +94,7 @@ class ThresholdGlobal:
 
     def apply(self, image):
         threshold = (self.filters[self.chosen_filter])(image)
-        return image > threshold
+        return (image > threshold).astype(int)
 
     def get_description(self):
         return "This is a Threshold Global Filter using the " + self.chosen_filter + " filter"
@@ -95,7 +114,7 @@ class ThresholdLocal:
     def apply(self, image):
         threshold = self.filter(image, self.block_size, method=self.method, offset=self.offset, mode=self.mode,
                                 param=self.param, cval=self.cval)
-        return image > threshold
+        return (image > threshold).astype(int)
 
     def randomize(self):
         self.block_size = random.randint(3, 50)
@@ -194,8 +213,31 @@ class Frangi:
                + ", beta1:" + str(self.beta1) + ", beta2:" + str(self.beta2) + ", black ridges: " + str(
             self.black_ridges)
 
+class Erode:
+    def __init__(self):
+        self.filter = morphology.erosion
+        self.selem = None
+        self.out = None
+        self.shift_x = False
+        self.shift_y = False
+
+    def apply(self, image):
+        erode = self.filter(image,
+                            selem=self.selem,
+                            out=self.out,
+                            shift_x=self.shift_x,
+                            shift_y=self.shift_y)
+        return erode
+
+    def randomize(self):
+        pass
+
+    def get_description(self):
+        return "This is an Erosion Filter with default values"
+
 
 edge_detector_set = (Sobel, Roberts, Prewitt, Scharr)
 threshold_set = (ThresholdLocal, ThresholdGlobal)
+morphology_set = (Erode, Erode)
 misc_set = (Frangi, Frangi)
-category_set = (edge_detector_set, threshold_set)#, misc_set)
+category_set = (edge_detector_set, threshold_set, morphology_set)#, misc_set)

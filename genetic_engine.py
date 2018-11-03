@@ -33,7 +33,7 @@ class GeneticEngine:
     def evolve(self, generation_count):
         for g in range(generation_count):
             graded = [(self.fitness(x), x) for x in self.population]
-            graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
+            graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
             survived_population_size = int(len(graded) * self.survival_rate)
             parents = graded[0:survived_population_size]
 
@@ -64,12 +64,12 @@ class GeneticEngine:
 
     def get_graded_population(self):
         graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
+        graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
         return graded
 
     def get_best_individual(self):
         graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in reversed(sorted(graded, key=lambda pipeline: pipeline[0]))]
+        graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
         return graded[0]
 
     def get_population_grade(self):
