@@ -6,8 +6,28 @@ from matplotlib import pyplot as plt
 import p_filters
 
 image = io.imread('images/Kitties.jpg', as_gray=True)
-oracle = io.imread('images/Kitties.png', as_gray=True)/255.0
-oracle = oracle > 0.1
+# oracle = io.imread('images/Kitties.png', as_gray=True)/255.0
+# oracle = oracle > 0.1
+
+# stiamo creando la nostra griglia valorizzata
+oracle_bool = np.zeros(shape=(6, 10)).astype(bool)
+oracle_bool[2][3] = True
+oracle_bool[2][4] = True
+oracle_bool[2][6] = True
+oracle_bool[2][7] = True
+
+# oracle_bool = load_grid()
+# fino a qui
+
+oracle = np.zeros(shape=image.shape)
+square_height = (image.shape[0])/oracle_bool.shape[0]
+square_width = (image.shape[1])/oracle_bool.shape[1]
+
+# adatta griglia all'immagine di partenza, colorando di bianco (=1) dove il valore è true
+for i in range(oracle_bool.shape[0]):
+    for j in range(oracle_bool.shape[1]):
+        if oracle_bool[i, j]:
+            oracle[int(i*square_height):int(i*square_height)+int(square_height), int(j*square_width):int(j*square_width)+int(square_width)] = 1
 
 # il minimo/massimo numero di filtri di cui è composta una pipeline
 min_filters = 2
@@ -18,15 +38,17 @@ max_filters = 10
 def generate():
     pipeline_length = randint(min_filters, max_filters)
     pipeline = p_filters.Pipeline()
-    for i in range(pipeline_length):
+    for i in range(pipeline_length-1):
         pipeline.add_filter(get_random_filter())
+    # ogni pipeline ha una soglia come filtro finale
+    pipeline.add_filter(choice(p_filters.threshold_set)())
     return pipeline
 
 
 # prende in input un individuo e ritorna una sua versione mutata casualmente
 def mutate(individual_to_mutate):
     random_mutation_type = choice(["add", "remove", "replace"])
-    random_index = randint(0, individual_to_mutate.get_length()-1)
+    random_index = randint(0, individual_to_mutate.get_length()-2)
     if random_mutation_type == "add":
         individual_to_mutate.add_filter(get_random_filter(), random_index)
     elif random_mutation_type == "remove":
@@ -40,9 +62,11 @@ def mutate(individual_to_mutate):
 # prende in input un individuo (in questo caso una pipeline) e ritorna un numero. Maggiore è il numero e migliore è l'individuo
 def fitness(individual_to_fit):
     filtered_image = individual_to_fit.process(image)
-    filtered_image = filtered_image > 0.5
+    filtered_image = filtered_image.astype(bool)
+    # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
     success_sum = np.sum(np.logical_and(filtered_image, oracle))
-    fails_sum = np.sum(np.logical_xor(oracle, filtered_image))
+    # conta i pixel bianchi fuori dei quadrati bianchi
+    fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
     return success_sum/(fails_sum+1)
 
 
@@ -64,14 +88,14 @@ ge = GeneticEngine(generate,
                    mutate,
                    fitness,
                    crossover,
-                   population_size=20,
+                   population_size=100,
                    survival_rate=0.3,
                    random_selection_rate=0.3,
                    mutation_rate=0.3)
 
 print("Starting...")
 
-for i in range(30):
+for i in range(100):
     print("Current generation: " + str(i))
     ge.evolve(1)
 
@@ -87,27 +111,18 @@ print("Processed!")
 
 print(best_pipeline.get_description())
 
-fig, axs = plt.subplots(2, 2)
+fig, axs = plt.subplots(3, 2)
 
 oracle.shape = image.shape
 
+test_image = io.imread('images/Kitties_test.jpg', as_gray=True)
+test_filtered = best_pipeline.process(test_image)
+
 axs[0, 0].imshow(image, cmap='gray')
 axs[0, 1].imshow(oracle, cmap='gray')
-filtered_image = filtered_image > 0.5
 axs[1, 0].imshow(filtered_image, cmap='gray')
 axs[1, 1].imshow(np.logical_and(filtered_image, oracle), cmap='gray')
-
-# print(type(filtered_image))
-# print(filtered_image.shape)
-# print(oracle.shape)
-#
-# print(image.max())
-# print(image.min())
-# print(oracle.max())
-# print(oracle.min())
-# print(filtered_image.max())
-# print(filtered_image.min())
-# print((oracle - filtered_image).max())
-# print(abs(oracle - filtered_image).min())
+axs[2, 0].imshow(test_image, cmap='gray')
+axs[2, 1].imshow(test_filtered, cmap='gray')
 
 plt.show()
