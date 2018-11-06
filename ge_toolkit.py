@@ -7,7 +7,7 @@ import p_filters
 import ge_config as cfg
 
 
-def load_training_set():
+def load_training_set_kittens():
     training_set = []
     image = io.imread(cfg.image_path, as_gray=True)
 
@@ -20,7 +20,7 @@ def load_training_set():
     # oracle_bool = load_grid()
     # fino a qui
     # crea matrice di zeri (un'immagine tutta nera della stessa dim dell'immagine originale)
-    oracle = np.zeros(shape=image.shape)
+    oracle = np.zeros(shape=image.shape).astype(bool)
     square_height = (image.shape[0]) / oracle_bool.shape[0]
     square_width = (image.shape[1]) / oracle_bool.shape[1]
     # adatta griglia all'immagine di partenza, colorando di bianco (=1) dove il valore è true
@@ -35,6 +35,32 @@ def load_training_set():
         'oracle': oracle
     }
     training_set.append(kittens)
+    return training_set
+
+
+def load_training_set_scratches():
+    training_set = []
+    image = io.imread("images/02A_orig.bmp")
+    oracle = np.zeros(shape=image.shape).astype(bool)
+    coordinates = []
+    try:
+        with open("images/02A_orig.oracle") as oracle_02A:
+            coordinates = oracle_02A.readlines()
+    except FileNotFoundError as e:
+        print(str(e))
+    for s in coordinates:
+        x = s.split(",")[0]
+        y = s.split(",")[1]
+        x = int(x)
+        print(x)
+        y = int(y)
+        oracle[y-32:y+32, x-32:x+32] = True
+
+    scratches = {
+        'image': image,
+        'oracle': oracle
+    }
+    training_set.append(scratches)
     return training_set
 
 

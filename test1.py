@@ -9,7 +9,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set()
+training_set = tk.load_training_set_scratches()
 
 
 # crea un individuo casualmente e lo restituisce
@@ -50,7 +50,7 @@ def fitness(individual_to_fit):
         success_sum = np.sum(np.logical_and(filtered_image, oracle))
         # conta i pixel bianchi fuori dei quadrati bianchi
         fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
-        fitness_values.append(success_sum / (fails_sum + 1))
+        fitness_values.append((success_sum + 1) / (fails_sum + 1))
     return np.mean(fitness_values)
 
 
