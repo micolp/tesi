@@ -1,7 +1,7 @@
 from p_filters import category_set
 from skimage import io
 
-image = io.imread('images/Kitties.jpg', as_gray=True)
+image = io.imread('images/image.png', as_gray=True)
 print(str(type(image)))
 print(image.dtype)
 
@@ -24,6 +24,8 @@ for category in category_set:
             print("--------------------------------------------------------------------------------------------------\n"
                   "PROBLEM! Result type not supported. It was instead a " + str(result.dtype) + ".\n"
                   "The filter says: \n" + filter.get_description())
+        print("------------------------------------------------------------------------------------------------------\n"
+              + filter.get_description())
 
 
 

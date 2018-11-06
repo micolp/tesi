@@ -9,7 +9,7 @@ image = io.imread('images/Kitties.jpg', as_gray=True)
 # oracle = io.imread('images/Kitties.png', as_gray=True)/255.0
 # oracle = oracle > 0.1
 
-# stiamo creando la nostra griglia valorizzata
+# stiamo creando la nostra griglia valorizzata (matrice di False)
 oracle_bool = np.zeros(shape=(6, 10)).astype(bool)
 oracle_bool[2][3] = True
 oracle_bool[2][4] = True
@@ -19,6 +19,7 @@ oracle_bool[2][7] = True
 # oracle_bool = load_grid()
 # fino a qui
 
+# crea matrice di zeri (un'immagine tutta nera della stessa dim dell'immagine originale)
 oracle = np.zeros(shape=image.shape)
 square_height = (image.shape[0])/oracle_bool.shape[0]
 square_width = (image.shape[1])/oracle_bool.shape[1]
@@ -27,7 +28,8 @@ square_width = (image.shape[1])/oracle_bool.shape[1]
 for i in range(oracle_bool.shape[0]):
     for j in range(oracle_bool.shape[1]):
         if oracle_bool[i, j]:
-            oracle[int(i*square_height):int(i*square_height)+int(square_height), int(j*square_width):int(j*square_width)+int(square_width)] = 1
+            oracle[int(i*square_height):int(i*square_height)+int(square_height),
+            int(j*square_width):int(j*square_width)+int(square_width)] = 1
 
 # il minimo/massimo numero di filtri di cui è composta una pipeline
 min_filters = 2
@@ -90,7 +92,7 @@ ge = GeneticEngine(generate,
                    mutate,
                    fitness,
                    crossover,
-                   population_size=100,
+                   population_size=10,
                    survival_rate=0.3,
                    random_selection_rate=0.3,
                    mutation_rate=0.3)
