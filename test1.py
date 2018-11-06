@@ -4,8 +4,9 @@ from genetic_engine import GeneticEngine
 from skimage import io
 from matplotlib import pyplot as plt
 import p_filters
+import ge_config as cfg
 
-image = io.imread('images/Kitties.jpg', as_gray=True)
+image = io.imread(cfg.image_path, as_gray=True)
 # oracle = io.imread('images/Kitties.png', as_gray=True)/255.0
 # oracle = oracle > 0.1
 
@@ -88,14 +89,11 @@ def get_random_filter():
     return random_filter_class()
 
 
-ge = GeneticEngine(generate,
-                   mutate,
-                   fitness,
-                   crossover,
-                   population_size=10,
-                   survival_rate=0.3,
-                   random_selection_rate=0.1,
-                   mutation_rate=0.15)
+ge = GeneticEngine(generate, mutate, fitness, crossover,
+                   population_size=cfg.population_size,
+                   survival_rate=cfg.survival_rate,
+                   random_selection_rate=cfg.random_selection_rate,
+                   mutation_rate=cfg.mutation_rate)
 
 print("Starting...")
 
@@ -119,7 +117,7 @@ fig, axs = plt.subplots(3, 2)
 
 oracle.shape = image.shape
 
-test_image = io.imread('images/Kitties_test.jpg', as_gray=True)
+test_image = io.imread(cfg.test_image_path, as_gray=True)
 test_filtered = best_pipeline.process(test_image)
 
 axs[0, 0].imshow(image, cmap='gray')
