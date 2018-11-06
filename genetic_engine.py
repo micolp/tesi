@@ -32,13 +32,13 @@ class GeneticEngine:
     '''
     def evolve(self, generation_count):
         for g in range(generation_count):
-            graded = [(self.fitness(x), x) for x in self.population]
-            graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
-            survived_population_size = int(len(graded) * self.survival_rate)
-            parents = graded[0:survived_population_size]
+            self.sort_population_by_fitness()
+
+            survived_population_size = int(len(self.population) * self.survival_rate)
+            parents = self.population[0:survived_population_size]
 
             # randomly add other individuals to promote genetic diversity
-            for individual in graded[survived_population_size:]:
+            for individual in self.population[survived_population_size:]:
                 if self.random_selection_rate > random():
                     parents.append(individual)
 
@@ -62,15 +62,15 @@ class GeneticEngine:
 
             self.population = parents + children
 
-    def get_graded_population(self):
-        graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
-        return graded
+    def sort_population_by_fitness(self):
+        for individual in self.population:
+            if not individual.fitness_value:
+                individual.fitness_value = self.fitness(individual)
+        self.population.sort(key=lambda individual: individual.fitness_value, reverse=True)
 
     def get_best_individual(self):
-        graded = [(self.fitness(x), x) for x in self.population]
-        graded = [x[1] for x in sorted(graded, key=lambda pipeline: pipeline[0], reverse=True)]
-        return graded[0]
+        self.sort_population_by_fitness()
+        return self.population[0]
 
     def get_population_grade(self):
         return sum([self.fitness(individual) for individual in self.population])/len(self.population)
