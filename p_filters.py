@@ -77,9 +77,12 @@ class Pipeline:
 # ----------------------------------------------------------------------------------------------------------------------
 class AbstractFilter:
     def get_description(self):
-        description = str(self.__class__)
+        class_name = str(self.__class__).split('.')[-1][:-2]
+        description = class_name
+        if self.params.items():
+            description += ' with params:'
         for param, value in self.params.items():
-            description += "\n" + param + ": " + str(value)
+            description += "\n\t" + param + ": " + str(value)
         return description
 
 
