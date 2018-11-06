@@ -71,34 +71,29 @@ ge = GeneticEngine(generate, mutate, fitness, crossover,
 
 print("Starting...")
 
-for i in range(5):
+for i in range(cfg.generation_count):
     print("Current generation: " + str(i))
     ge.evolve(1)
 
 print("Done...")
 
-best_pipeline = ge.get_best_individual()
 
-print("Processing...")
+def show_recap():
+    best_pipeline = ge.get_best_individual()
+    print("Processing...")
+    filtered_image = best_pipeline.process(training_set[0]['image'], normalize=True, verbose=True)
+    print("Processed!")
+    print(best_pipeline.get_description())
+    fig, axs = plt.subplots(3, 2)
+    training_set[0]['oracle'].shape = training_set[0]['image'].shape
+    test_image = io.imread(cfg.test_image_path, as_gray=True)
+    test_filtered = best_pipeline.process(test_image)
+    axs[0, 0].imshow(training_set[0]['image'], cmap='gray')
+    axs[0, 1].imshow(training_set[0]['oracle'], cmap='gray')
+    axs[1, 0].imshow(filtered_image, cmap='gray')
+    axs[1, 1].imshow(np.logical_and(filtered_image, training_set[0]['oracle']), cmap='gray')
+    axs[2, 0].imshow(test_image, cmap='gray')
+    axs[2, 1].imshow(test_filtered, cmap='gray')
+    plt.show()
 
-filtered_image = best_pipeline.process(image, normalize=True, verbose=True)
-
-print("Processed!")
-
-print(best_pipeline.get_description())
-
-fig, axs = plt.subplots(3, 2)
-
-oracle.shape = image.shape
-
-test_image = io.imread(cfg.test_image_path, as_gray=True)
-test_filtered = best_pipeline.process(test_image)
-
-axs[0, 0].imshow(image, cmap='gray')
-axs[0, 1].imshow(oracle, cmap='gray')
-axs[1, 0].imshow(filtered_image, cmap='gray')
-axs[1, 1].imshow(np.logical_and(filtered_image, oracle), cmap='gray')
-axs[2, 0].imshow(test_image, cmap='gray')
-axs[2, 1].imshow(test_filtered, cmap='gray')
-
-plt.show()
+show_recap()
