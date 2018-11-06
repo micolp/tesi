@@ -22,6 +22,9 @@ class GeneticEngine:
         self.mutation_rate = mutation_rate
         # Crea una popolazione di individui casualmente
         self.population = [self.generate() for i in range(self.population_size)]
+        # Assegna un valore di fitness nullo ad ogni individuo
+        for individual in self.population:
+            individual.fitness_value = None
 
     '''
     per ogni generazione:
@@ -53,12 +56,14 @@ class GeneticEngine:
                     male = parents[male_index]
                     female = parents[female_index]
                     child = self.breed(male, female)
+                    child.fitness_value = None
                     children.append(child)
 
             # mutate some children
             for i in range(len(children)):
                 if self.mutation_rate > random():
                     children[i] = self.mutate(children[i])
+                    children[i].fitness_value = None
 
             self.population = parents + children
 

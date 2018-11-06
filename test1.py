@@ -44,7 +44,6 @@ def generate():
         pipeline.add_filter(get_random_filter())
     # ogni pipeline ha una soglia come filtro finale
     pipeline.add_filter(choice(p_filters.threshold_set)())
-    pipeline.fitness_value = None
     return pipeline
 
 
@@ -59,7 +58,6 @@ def mutate(individual_to_mutate):
     elif random_mutation_type == "replace":
         individual_to_mutate.remove_filter(random_index)
         individual_to_mutate.add_filter(get_random_filter(), random_index)
-    individual_to_mutate.fitness_value = None
     return individual_to_mutate
 
 
@@ -81,7 +79,6 @@ def crossover(male, female):
     male_length = male.get_length()
     female_length = female.get_length()
     child = male.get_subpipeline(0, male_length // 2) + female.get_subpipeline(female_length // 2)
-    child.fitness_value = None
     return child
 
 
@@ -95,10 +92,10 @@ ge = GeneticEngine(generate,
                    mutate,
                    fitness,
                    crossover,
-                   population_size=100,
+                   population_size=10,
                    survival_rate=0.3,
-                   random_selection_rate=0.3,
-                   mutation_rate=0.3)
+                   random_selection_rate=0.1,
+                   mutation_rate=0.15)
 
 print("Starting...")
 
