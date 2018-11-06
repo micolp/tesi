@@ -33,8 +33,8 @@ for i in range(oracle_bool.shape[0]):
             int(j*square_width):int(j*square_width)+int(square_width)] = 1
 
 # il minimo/massimo numero di filtri di cui è composta una pipeline
-min_filters = 2
-max_filters = 10
+min_filters = cfg.pipeline_min_filters
+max_filters = cfg.pipeline_max_filters
 
 
 # crea un individuo casualmente e lo restituisce
