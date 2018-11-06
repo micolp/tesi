@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 import p_filters
 # import sys
 
-image = io.imread('images/image.png', as_gray=True)
-oracle = io.imread('images/imagemask.png', as_gray=True)
+image = io.imread('images/image_short.png', as_gray=True)
+oracle = io.imread('images/imagemask_short.png', as_gray=True)
 # print(sys.getsizeof(image))
 
 
@@ -72,8 +72,8 @@ ge = GeneticEngine(generate,
                    mutate,
                    fitness,
                    crossover,
-                   population_size=5,
-                   survival_rate=0.5,
+                   population_size=10,
+                   survival_rate=0.3,
                    random_selection_rate=0.3,
                    mutation_rate=0.3)
 

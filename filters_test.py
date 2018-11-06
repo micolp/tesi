@@ -1,7 +1,7 @@
 from p_filters import category_set
 from skimage import io
 
-image = io.imread('images/image.png', as_gray=True)
+image = io.imread('images/image_short.png', as_gray=True)
 print(str(type(image)))
 print(image.dtype)
 

@@ -77,7 +77,7 @@ class Pipeline:
 # ----------------------------------------------------------------------------------------------------------------------
 class AbstractFilter:
     def get_description(self):
-        description = str(self.__class__) + "\n"
+        description = str(self.__class__)
         for param, value in self.params.items():
             description += "\n" + param + ": " + str(value)
         return description
@@ -132,7 +132,6 @@ class Sobel(AbstractFilter):
     def __init__(self):
         self.filter = filters.sobel
         self.params = {}
-        self.randomize()
 
     def apply(self, image):
         return self.filter(image)
@@ -188,10 +187,11 @@ class Prewitt(AbstractFilter):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Frangi:
+class Frangi(AbstractFilter):
     def __init__(self):
         self.filter = filters.frangi
         self.params = {"scale_range": (1, 10), "scale_step": 0.1, "beta1": 3, "beta2": 4, "black_ridges": False}
+        # self.randomize()
 
     def apply(self, image):
         frangi = self.filter(image, scale_range=self.params['scale_range'], scale_step=self.params['scale_step'],
@@ -207,201 +207,146 @@ class Frangi:
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Gaussian:
+class Gaussian(AbstractFilter):
     def __init__(self):
         self.filter = filters.gaussian
-        self.sigma = 1
-        self.output = None
-        self.mode = ''
-        self.cval = 0
-        self.multichannel = None
-        self.preserve_range = False
-        self.truncate = 4.0
+        self.params = {"sigma": 1, "output": None, "mode": '', "cval": 0,
+                       "multichannel": None, "preserve_range": False, "truncate": 4.0}
         self.randomize()
 
     def apply(self, image):
-        gaussian = self.filter(image, sigma=self.sigma, output=self.output, mode=self.mode, cval=self.cval,
-                               multichannel=self.multichannel, preserve_range=self.preserve_range, truncate=self.truncate)
+        gaussian = self.filter(image, sigma=self.params['sigma'], output=self.params["output"], mode=self.params['mode'],
+                               cval=self.params['cval'], multichannel=self.params['multichannel'],
+                               preserve_range=self.params['preserve_range'], truncate=self.params['truncate'])
         return gaussian
 
     def randomize(self):
-        self.sigma = random.uniform(0.4, 10.0)
-        self.mode = random.choice(['reflect', 'constant', 'nearest', 'mirror', 'wrap'])
-        if self.mode == 'constant':
-            self.cval = random.uniform(-1.0, 1.0)
-
-    def get_description(self):
-        return "This is a Gaussian Filter with sigma:" + str(self.sigma) + ", mode:" + \
-                self.mode + ", cval:" + str(self.cval)
+        self.params['sigma'] = random.uniform(0.4, 10.0)
+        self.params['mode'] = random.choice(['reflect', 'constant', 'nearest', 'mirror', 'wrap'])
+        if self.params['mode'] == 'constant':
+            self.params['cval'] = random.uniform(-1.0, 1.0)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Laplacian:
+class Laplacian(AbstractFilter):
     def __init__(self):
         self.filter = filters.laplace
-        self.ksize = 3
-        self.mask = None
+        self.params = {"ksize": 3, "mask": None}
+        # self.randomize()
 
     def apply(self, image):
-        laplacian = self.filter(image, ksize=self.ksize, mask=None)
+        laplacian = self.filter(image, ksize=self.params['ksize'], mask=self.params['mask'])
         return laplacian
 
     def randomize(self):
-        self.ksize = random.randint(1, 10)
-
-    def get_description(self):
-        return "This is a Laplace Filter with ksize:" + str(self.ksize)
+        self.params['ksize'] = random.randint(3, 5)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Hessian:
+class Hessian(AbstractFilter):
     def __init__(self):
         self.filter = filters.hessian
-        self.scale_range = (1, 10)
-        self.scale_step = 2
-        self.beta1 = 0.5
-        self.beta2 = 15
-        self.randomize()
+        self.params = {'scale_range': (1, 10), 'scale_step': 2, 'beta1': 0.5, 'beta2': 15 }
+        # self.randomize()
 
     def apply(self, image):
-        hessian = self.filter(image, scale_range=self.scale_range, scale_step=self.scale_step,
-                              beta1=self.beta1, beta2=self.beta2)
+        hessian = self.filter(image, scale_range=self.params['scale_range'], scale_step=self.params['scale_step'],
+                              beta1=self.params['beta1'], beta2=self.params['beta2'])
         return hessian
 
     def randomize(self):
-        self.scale_range = (random.uniform(0.9, 1.0), random.uniform(9.9, 10.0))
-        self.scale_step = random.uniform(0.0, 3.0)
-        self.beta1 = random.uniform(-0.5, 0.5)
-        self.beta2 = random.uniform(14.8, 15.0)
-
-    def get_description(self):
-        return "This is a Hessian Filter with scale range:" + str(self.scale_range) +\
-               ", scale step:" + str(self.scale_step) + ", beta1:" + str(self.beta1) +\
-               ", beta2:" + str(self.beta2)
+        self.params['scale_range'] = (random.uniform(0.9, 1.0), random.uniform(9.9, 10.0))
+        self.params['scale_step'] = random.uniform(0.0, 3.0)
+        self.params['beta1'] = random.uniform(-0.5, 0.5)
+        self.params['beta2'] = random.uniform(14.8, 15.0)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # FEATURE
 # ----------------------------------------------------------------------------------------------------------------------
-class Canny:
+class Canny(AbstractFilter):
     def __init__(self):
         self.filter = feature.canny
-        self.sigma = 1.0
-        self.low_threshold = None
-        self.high_threshold = None
-        self.mask = None
-        self.use_quantiles = False
+        self.params = {'sigma': 1.0, 'low_threshold': None, 'high_threshold': None,
+                       'mask': None, 'use_quantiles': False}
         self.randomize()
 
     def apply(self, image):
-        canny = self.filter(image, self.sigma, self.low_threshold, self.high_threshold,
-                            mask=self.mask, use_quantiles=self.use_quantiles)
+        canny = self.filter(image, self.params['sigma'], self.params['low_threshold'], self.params['high_threshold'],
+                            mask=self.params['mask'], use_quantiles=self.params['use_quantiles'])
         return canny.astype(int)
 
     def randomize(self):
-        self.sigma = random.uniform(0.4, 10.0)
-        # self.low_threshold = random.uniform()
-        # self.high_threshold = random.uniform()
-
-    def get_description(self):
-        return "This is a Canny Filter with sigma:" + str(self.sigma) + ", low threshold:" + \
-                str(self.low_threshold) + ", high threshold:" + str(self.high_threshold)
+        self.params['sigma'] = random.uniform(0.4, 10.0)
+        # self.params['low_threshold'] = random.uniform()
+        # self.params['high_threshold'] = random.uniform()
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # MORPHOLOGY
 # ----------------------------------------------------------------------------------------------------------------------
-class Erode:
+class Erode(AbstractFilter):
     def __init__(self):
         self.filter = morphology.erosion
-        self.selem = None
-        self.out = None
-        self.shift_x = False
-        self.shift_y = False
+        self.params = {'selem': None, 'out': None, 'shift_x': False, 'shift_y': False}
 
     def apply(self, image):
-        erode = self.filter(image,
-                            selem=self.selem,
-                            out=self.out,
-                            shift_x=self.shift_x,
-                            shift_y=self.shift_y)
+        erode = self.filter(image, selem=self.params['selem'], out=self.params['out'],
+                            shift_x=self.params['shift_x'], shift_y=self.params['shift_y'])
         return erode
 
     def randomize(self):
         pass
 
-    def get_description(self):
-        return "This is an Erosion Filter"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Dilate:
+class Dilate(AbstractFilter):
     def __init__(self):
         self.filter = morphology.dilation
-        self.selem = None
-        self.out = None
-        self.shift_x = False
-        self.shift_y = False
+        self.params = {'selem': None, 'out': None, 'shift_x': False, 'shift_y': False}
 
     def apply(self, image):
-        dilate = self.filter(image,
-                             selem=self.selem,
-                             out=self.out,
-                             shift_x=self.shift_x,
-                             shift_y=self.shift_y)
+        dilate = self.filter(image, selem=self.params['selem'], out=self.params['out'],
+                             shift_x=self.params['shift_x'], shift_y=self.params['shift_y'])
         return dilate
 
     def randomize(self):
         pass
 
-    def get_description(self):
-        return "This is a Dilation Filter"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Open:
+class Open(AbstractFilter):
     def __init__(self):
         self.filter = morphology.opening
-        self.selem = None
-        self.out = None
+        self.params = {'selem': None, 'out': None}
 
     def apply(self, image):
-        open = self.filter(image,
-                           selem=self.selem,
-                           out=self.out)
+        open = self.filter(image, selem=self.params['selem'], out=self.params['out'])
         return open
 
     def randomize(self):
         pass
 
-    def get_description(self):
-        return "This is an Opening Filter"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Close:
+class Close(AbstractFilter):
     def __init__(self):
         self.filter = morphology.closing
-        self.selem = None
-        self.out = None
+        self.params = {'selem': None, 'out': None}
 
     def apply(self, image):
-        close = self.filter(image,
-                            selem=self.selem,
-                            out=self.out)
+        close = self.filter(image, selem=self.params['selem'], out=self.params['out'])
         return close
 
     def randomize(self):
         pass
 
-    def get_description(self):
-        return "This is a Closing Filter"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Skeleton:
+class Skeleton(AbstractFilter):
     def __init__(self):
         self.filter = morphology.skeletonize
+        self.params = {}
 
     def apply(self, image):
         skeleton = self.filter(image)
@@ -410,26 +355,20 @@ class Skeleton:
     def randomize(self):
         pass
 
-    def get_description(self):
-        return "This is a Skeletonize Filter"
-
 
 # ----------------------------------------------------------------------------------------------------------------------
-class Thin:
+class Thin(AbstractFilter):
     def __init__(self):
         self.filter = morphology.thin
-        self.max_iter = None
-        self.randomize()
+        self.params = {'max_iter': None}
+        # self.randomize()
 
     def apply(self, image):
-        thin = self.filter(image, max_iter=self.max_iter)
+        thin = self.filter(image, max_iter=self.params['max_iter'])
         return thin.astype(int)
 
     def randomize(self):
-        self.max_iter = random.randint(1, 10)
-
-    def get_description(self):
-        return "This is a Thin Filter"
+        self.params['max_iter'] = random.randint(1, 10)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -437,7 +376,8 @@ class Thin:
 # ----------------------------------------------------------------------------------------------------------------------
 edge_detector_set = (Sobel, Roberts, Prewitt, Scharr, Canny)
 threshold_set = (ThresholdLocal, ThresholdGlobal)
-morphology_set = (Erode, Dilate, Open, Close, Skeleton, Thin)
-misc_set = (Gaussian, Laplacian, Hessian, Frangi)
+morphology_set = (Erode, Dilate, Open, Close, Skeleton)#, Thin
+misc_set = (Hessian, Laplacian, Gaussian)#, Frangi
 
 category_set = (edge_detector_set, threshold_set, morphology_set, misc_set)
+

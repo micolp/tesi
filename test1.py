@@ -92,7 +92,7 @@ ge = GeneticEngine(generate,
                    mutate,
                    fitness,
                    crossover,
-                   population_size=10,
+                   population_size=100,
                    survival_rate=0.3,
                    random_selection_rate=0.3,
                    mutation_rate=0.3)
