@@ -11,11 +11,12 @@ import ge_toolkit as tk
 
 training_set = tk.load_training_set()
 
+
 # crea un individuo casualmente e lo restituisce
 def generate():
     pipeline_length = randint(cfg.pipeline_min_filters, cfg.pipeline_max_filters)
     pipeline = p_filters.Pipeline()
-    for i in range(pipeline_length-1):
+    for i in range(pipeline_length - 1):
         pipeline.add_filter(tk.get_random_filter())
     # ogni pipeline ha una soglia come filtro finale
     pipeline.add_filter(choice(p_filters.threshold_set)())
@@ -25,7 +26,7 @@ def generate():
 # prende in input un individuo e ritorna una sua versione mutata casualmente
 def mutate(individual_to_mutate):
     random_mutation_type = choice(["add", "remove", "replace"])
-    random_index = randint(0, individual_to_mutate.get_length()-2)
+    random_index = randint(0, individual_to_mutate.get_length() - 2)
     if random_mutation_type == "add":
         individual_to_mutate.add_filter(tk.get_random_filter(), random_index)
     elif random_mutation_type == "remove":
@@ -39,13 +40,18 @@ def mutate(individual_to_mutate):
 # prende in input un individuo (in questo caso una pipeline) e ritorna un numero.
 # Maggiore è il numero e migliore è l'individuo
 def fitness(individual_to_fit):
-    filtered_image = individual_to_fit.process(image)
-    filtered_image = filtered_image.astype(bool)
-    # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
-    success_sum = np.sum(np.logical_and(filtered_image, oracle))
-    # conta i pixel bianchi fuori dei quadrati bianchi
-    fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
-    return success_sum/(fails_sum+1)
+    fitness_values = []
+    for example in training_set:
+        image = example['image']
+        oracle = example['oracle']
+        filtered_image = individual_to_fit.process(image)
+        filtered_image = filtered_image.astype(bool)
+        # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
+        success_sum = np.sum(np.logical_and(filtered_image, oracle))
+        # conta i pixel bianchi fuori dei quadrati bianchi
+        fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
+        fitness_values.append(success_sum / (fails_sum + 1))
+    return np.mean(fitness_values)
 
 
 # prende in intput due individui (male, female : due pipeline)

@@ -8,9 +8,9 @@ import ge_config as cfg
 
 
 def load_training_set():
-    global training_set
+    training_set = []
     image = io.imread(cfg.image_path, as_gray=True)
-    training_set.append(io.imread(cfg.image_path, as_gray=True))
+
     # stiamo creando la nostra griglia valorizzata (matrice di False)
     oracle_bool = np.zeros(shape=(6, 10)).astype(bool)
     oracle_bool[2][3] = True
@@ -29,6 +29,13 @@ def load_training_set():
             if oracle_bool[i, j]:
                 oracle[int(i * square_height):int(i * square_height) + int(square_height),
                 int(j * square_width):int(j * square_width) + int(square_width)] = 1
+
+    kittens = {
+        'image': image,
+        'oracle': oracle
+    }
+    training_set.append(kittens)
+    return training_set
 
 
 def get_random_filter():
