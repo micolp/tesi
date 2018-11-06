@@ -1,48 +1,22 @@
-import numpy as np
 from random import randint, choice
-from genetic_engine import GeneticEngine
+
+import numpy as np
 from skimage import io
 from matplotlib import pyplot as plt
+
+from genetic_engine import GeneticEngine
 import p_filters
 import ge_config as cfg
+import ge_toolkit as tk
 
-image = io.imread(cfg.image_path, as_gray=True)
-# oracle = io.imread('images/Kitties.png', as_gray=True)/255.0
-# oracle = oracle > 0.1
-
-# stiamo creando la nostra griglia valorizzata (matrice di False)
-oracle_bool = np.zeros(shape=(6, 10)).astype(bool)
-oracle_bool[2][3] = True
-oracle_bool[2][4] = True
-oracle_bool[2][6] = True
-oracle_bool[2][7] = True
-
-# oracle_bool = load_grid()
-# fino a qui
-
-# crea matrice di zeri (un'immagine tutta nera della stessa dim dell'immagine originale)
-oracle = np.zeros(shape=image.shape)
-square_height = (image.shape[0])/oracle_bool.shape[0]
-square_width = (image.shape[1])/oracle_bool.shape[1]
-
-# adatta griglia all'immagine di partenza, colorando di bianco (=1) dove il valore è true
-for i in range(oracle_bool.shape[0]):
-    for j in range(oracle_bool.shape[1]):
-        if oracle_bool[i, j]:
-            oracle[int(i*square_height):int(i*square_height)+int(square_height),
-            int(j*square_width):int(j*square_width)+int(square_width)] = 1
-
-# il minimo/massimo numero di filtri di cui è composta una pipeline
-min_filters = cfg.pipeline_min_filters
-max_filters = cfg.pipeline_max_filters
-
+training_set = tk.load_training_set()
 
 # crea un individuo casualmente e lo restituisce
 def generate():
-    pipeline_length = randint(min_filters, max_filters)
+    pipeline_length = randint(cfg.pipeline_min_filters, cfg.pipeline_max_filters)
     pipeline = p_filters.Pipeline()
     for i in range(pipeline_length-1):
-        pipeline.add_filter(get_random_filter())
+        pipeline.add_filter(tk.get_random_filter())
     # ogni pipeline ha una soglia come filtro finale
     pipeline.add_filter(choice(p_filters.threshold_set)())
     return pipeline
@@ -53,12 +27,12 @@ def mutate(individual_to_mutate):
     random_mutation_type = choice(["add", "remove", "replace"])
     random_index = randint(0, individual_to_mutate.get_length()-2)
     if random_mutation_type == "add":
-        individual_to_mutate.add_filter(get_random_filter(), random_index)
+        individual_to_mutate.add_filter(tk.get_random_filter(), random_index)
     elif random_mutation_type == "remove":
         individual_to_mutate.remove_filter(random_index)
     elif random_mutation_type == "replace":
         individual_to_mutate.remove_filter(random_index)
-        individual_to_mutate.add_filter(get_random_filter(), random_index)
+        individual_to_mutate.add_filter(tk.get_random_filter(), random_index)
     return individual_to_mutate
 
 
@@ -81,12 +55,6 @@ def crossover(male, female):
     female_length = female.get_length()
     child = male.get_subpipeline(0, male_length // 2) + female.get_subpipeline(female_length // 2)
     return child
-
-
-def get_random_filter():
-    random_category = choice(p_filters.category_set)
-    random_filter_class = choice(random_category)
-    return random_filter_class()
 
 
 ge = GeneticEngine(generate, mutate, fitness, crossover,
