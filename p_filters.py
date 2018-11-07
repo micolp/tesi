@@ -1,5 +1,5 @@
 import random
-from skimage import filters, morphology, feature
+from skimage import filters, morphology, feature, util
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -374,13 +374,28 @@ class Thin(AbstractFilter):
         self.params['max_iter'] = random.randint(1, 10)
 
 
+#-----------------------------------------------------------------------------------------------------------------------
+class Invert(AbstractFilter):
+    def __init__(self):
+        self.filter = util.invert
+        self.params = {'signed_float': True}
+        self.randomize()
+
+    def apply(self, image):
+        inverse = self.filter(image, signed_float=self.params['signed_float'])
+        return inverse
+
+    def randomize(self):
+        self.params['signed_float'] = random.choice([True, False])
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # SETS
 # ----------------------------------------------------------------------------------------------------------------------
 edge_detector_set = (Sobel, Roberts, Prewitt, Scharr, Canny)
-threshold_set = (ThresholdGlobal, ThresholdGlobal)#, ThresholdLocal
+threshold_set = (ThresholdGlobal, ThresholdGlobal) #, ThresholdLocal)
 morphology_set = (Erode, Dilate, Open, Close, Skeleton)#, Thin
-misc_set = (Laplacian, Gaussian)#, Frangi Hessian,
+misc_set = (Laplacian, Gaussian, Invert)# Frangi, Hessian,
 
 category_set = (edge_detector_set, threshold_set, morphology_set, misc_set)
 

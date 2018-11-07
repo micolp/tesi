@@ -10,7 +10,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set_kittens()
+training_set = tk.load_training_set_final(200)
 
 
 # crea un individuo casualmente e lo restituisce
@@ -80,6 +80,8 @@ print("Starting...")
 for i in range(cfg.generation_count):
     print("Current generation: " + str(i))
     ge.evolve(1)
+    print(ge.get_population_grade())
+    print(ge.get_best_individual_fitness())
 
 print("Done...")
 

@@ -77,5 +77,9 @@ class GeneticEngine:
         self.sort_population_by_fitness()
         return self.population[0]
 
+    def get_best_individual_fitness(self):
+        return self.get_best_individual().fitness_value
+
     def get_population_grade(self):
         return sum([self.fitness(individual) for individual in self.population])/len(self.population)
+

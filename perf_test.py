@@ -7,7 +7,7 @@ image = io.imread('images/Kitties.jpg', as_gray=True)
 supported_input = ("float64", "int32")
 
 perf_results = []
-for i in range(50):
+for i in range(1):
     for category in category_set:
         for filter_class in category:
             tic = clock()
