@@ -88,10 +88,12 @@ def load_training_set_final(block_size):
     height = image.shape[0]
     cols = int(width/block_size)
     rows = int(height/block_size)
-    for i in range(10): #(rows):
-        for j in range(10): #(cols):
-            next_image = image[i:i + block_size, j:j + block_size]
-            next_oracle = oracle[i:i + block_size, j:j + block_size]
+    for i in range(3): #(rows):
+        for j in range(3): #(cols):
+            i_pixel = i * block_size
+            j_pixel = j * block_size
+            next_image = image[i_pixel:i_pixel + block_size, j_pixel:j_pixel + block_size]
+            next_oracle = oracle[i_pixel:i_pixel + block_size, j_pixel:j_pixel + block_size]
 
             next_example = {
                 'image': next_image,

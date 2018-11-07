@@ -1,4 +1,5 @@
 from random import randint, choice
+from time import sleep
 
 import numpy as np
 from skimage import io
@@ -9,7 +10,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set_final(200)
+training_set = tk.load_training_set_kittens()
 
 
 # crea un individuo casualmente e lo restituisce
@@ -41,6 +42,8 @@ def mutate(individual_to_mutate):
 # Maggiore è il numero e migliore è l'individuo
 def fitness(individual_to_fit):
     fitness_values = []
+    success_sums = []
+    fails_sums = []
     for example in training_set:
         image = example['image']
         oracle = example['oracle']
@@ -48,10 +51,13 @@ def fitness(individual_to_fit):
         filtered_image = filtered_image.astype(bool)
         # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
         success_sum = np.sum(np.logical_and(filtered_image, oracle))
+        success_sums.append(success_sum)
         # conta i pixel bianchi fuori dei quadrati bianchi
         fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
-        fitness_values.append((success_sum + 1) / (fails_sum + 1))
-    return np.mean(fitness_values)
+        fails_sums.append(fails_sum)
+    global_success_sum = sum(success_sums)
+    global_fails_sum = sum(fails_sums)
+    return (global_success_sum + 1) / (global_fails_sum + 1)
 
 
 # prende in input due individui (male, female : due pipeline)
@@ -79,21 +85,18 @@ print("Done...")
 
 
 def show_recap():
+    print('Retriving best individual of last generation...')
     best_pipeline = ge.get_best_individual()
-    print("Processing...")
-    filtered_image = best_pipeline.process(training_set[0]['image'], normalize=True, verbose=True)
-    print("Processed!")
+    print('Best individual is:')
     print(best_pipeline.get_description())
-    fig, axs = plt.subplots(3, 2)
-    training_set[4]['oracle'].shape = training_set[4]['image'].shape
-    test_image = io.imread(cfg.test_image_path, as_gray=True)
-    test_filtered = best_pipeline.process(test_image)
-    axs[0, 0].imshow(training_set[4]['image'], cmap='gray')
-    axs[0, 1].imshow(training_set[4]['oracle'], cmap='gray')
-    axs[1, 0].imshow(filtered_image, cmap='gray')
-    axs[1, 1].imshow(np.logical_and(filtered_image, training_set[0]['oracle']), cmap='gray')
-    axs[2, 0].imshow(test_image, cmap='gray')
-    axs[2, 1].imshow(test_filtered, cmap='gray')
-    plt.show()
+    for example in training_set:
+        fig, axs = plt.subplots(2, 2)
+        image = example['image']
+        filtered = best_pipeline.process(image)
+        axs[0, 0].imshow(image, cmap='gray')
+        axs[0, 1].imshow(example['oracle'], cmap='gray')
+        axs[1, 0].imshow(filtered, cmap='gray')
+        axs[1, 1].imshow(np.logical_and(filtered, example['oracle']), cmap='gray')
+        plt.show()
 
 show_recap()
