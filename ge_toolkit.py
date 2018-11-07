@@ -52,7 +52,6 @@ def load_training_set_scratches():
         x = s.split(",")[0]
         y = s.split(",")[1]
         x = int(x)
-        print(x)
         y = int(y)
         oracle[y-32:y+32, x-32:x+32] = True
 
@@ -64,7 +63,47 @@ def load_training_set_scratches():
     return training_set
 
 
+def load_training_set_scratches_short(square_size, i, j):
+    training_set = []
+    large_training_set = load_training_set_scratches()
+    image = large_training_set[0]["image"]
+    oracle = large_training_set[0]["oracle"]
+    image = image[i:i+square_size, j:j+square_size]
+    oracle = oracle[i:i+square_size, j:j+square_size]
+
+    small_scratches = {
+        'image': image,
+        'oracle': oracle
+    }
+    training_set.append(small_scratches)
+    return training_set
+
+
+def load_training_set_final(block_size):
+    training_set = []
+    large_training_set = load_training_set_scratches()
+    image = large_training_set[0]["image"]
+    oracle = large_training_set[0]["oracle"]
+    width = image.shape[1]
+    height = image.shape[0]
+    cols = int(width/block_size)
+    rows = int(height/block_size)
+    for i in range(10): #(rows):
+        for j in range(10): #(cols):
+            next_image = image[i:i + block_size, j:j + block_size]
+            next_oracle = oracle[i:i + block_size, j:j + block_size]
+
+            next_example = {
+                'image': next_image,
+                'oracle': next_oracle
+            }
+            training_set.append(next_example)
+    return training_set
+
+
 def get_random_filter():
     random_category = choice(p_filters.category_set)
     random_filter_class = choice(random_category)
     return random_filter_class()
+
+

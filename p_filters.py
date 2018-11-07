@@ -378,7 +378,7 @@ class Thin(AbstractFilter):
 # SETS
 # ----------------------------------------------------------------------------------------------------------------------
 edge_detector_set = (Sobel, Roberts, Prewitt, Scharr, Canny)
-threshold_set = (ThresholdLocal, ThresholdGlobal)
+threshold_set = (ThresholdGlobal, ThresholdGlobal)#, ThresholdLocal
 morphology_set = (Erode, Dilate, Open, Close, Skeleton)#, Thin
 misc_set = (Hessian, Laplacian, Gaussian)#, Frangi
 

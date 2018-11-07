@@ -9,7 +9,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set_scratches()
+training_set = tk.load_training_set_final(200)
 
 
 # crea un individuo casualmente e lo restituisce
@@ -54,7 +54,7 @@ def fitness(individual_to_fit):
     return np.mean(fitness_values)
 
 
-# prende in intput due individui (male, female : due pipeline)
+# prende in input due individui (male, female : due pipeline)
 # e ritorna un individuo risultato della combinazione genetica dei due
 def crossover(male, female):
     male_length = male.get_length()
@@ -85,11 +85,11 @@ def show_recap():
     print("Processed!")
     print(best_pipeline.get_description())
     fig, axs = plt.subplots(3, 2)
-    training_set[0]['oracle'].shape = training_set[0]['image'].shape
+    training_set[4]['oracle'].shape = training_set[4]['image'].shape
     test_image = io.imread(cfg.test_image_path, as_gray=True)
     test_filtered = best_pipeline.process(test_image)
-    axs[0, 0].imshow(training_set[0]['image'], cmap='gray')
-    axs[0, 1].imshow(training_set[0]['oracle'], cmap='gray')
+    axs[0, 0].imshow(training_set[4]['image'], cmap='gray')
+    axs[0, 1].imshow(training_set[4]['oracle'], cmap='gray')
     axs[1, 0].imshow(filtered_image, cmap='gray')
     axs[1, 1].imshow(np.logical_and(filtered_image, training_set[0]['oracle']), cmap='gray')
     axs[2, 0].imshow(test_image, cmap='gray')
