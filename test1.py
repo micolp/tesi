@@ -10,7 +10,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set_final(200)
+training_set = tk.load_training_set_kittens()
 
 
 # crea un individuo casualmente e lo restituisce
@@ -43,21 +43,27 @@ def mutate(individual_to_mutate):
 def fitness(individual_to_fit):
     fitness_values = []
     success_sums = []
+    oracle_success_sums = []
     fails_sums = []
+    oracle_fails_sums = []
     for example in training_set:
         image = example['image']
         oracle = example['oracle']
         filtered_image = individual_to_fit.process(image)
         filtered_image = filtered_image.astype(bool)
         # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
-        success_sum = np.sum(np.logical_and(filtered_image, oracle))
-        success_sums.append(success_sum)
+        success_count = np.sum(np.logical_and(filtered_image, oracle))
+        oracle_count = np.sum(oracle)
+        success_sums.append(success_count)
+        oracle_success_sums.append(oracle_count)
         # conta i pixel bianchi fuori dei quadrati bianchi
-        fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
-        fails_sums.append(fails_sum)
-    global_success_sum = sum(success_sums)
-    global_fails_sum = sum(fails_sums)
-    return (global_success_sum + 1) / (global_fails_sum + 1)
+        fails_count = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
+        oracle_fails_count = oracle.size - oracle_count
+        fails_sums.append(fails_count)
+        oracle_fails_sums.append(oracle_fails_count)
+    global_success_rate = sum(success_sums) / sum(oracle_success_sums)
+    global_fails_rate = sum(fails_sums) / sum(oracle_fails_sums)
+    return (global_success_rate + 1) / (global_fails_rate + 1)
 
 
 # prende in input due individui (male, female : due pipeline)
