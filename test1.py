@@ -44,25 +44,20 @@ def fitness(individual_to_fit):
     oracle_success_sums = []
     fails_sums = []
     oracle_fails_sums = []
-    for example in training_set:
+    for example in training_set: # training set è una lista di esempi (ogni esempio è (image, oracle))
         image = example['image']
         oracle = example['oracle']
         filtered_image = individual_to_fit.process(image)
         filtered_image = filtered_image.astype(bool)
         # conta pixel dell'itersezione (bianchi nei quadrati bianchi)
-        success_count = np.sum(np.logical_and(filtered_image, oracle))
-        oracle_count = np.sum(oracle)
-        success_sums.append(success_count)
-        oracle_success_sums.append(oracle_count)
+        success_sum = np.sum(np.logical_and(filtered_image, oracle)) # intersezione matrici
+        success_sums.append(success_sum)
         # conta i pixel bianchi fuori dei quadrati bianchi
-        fails_count = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
-        oracle_fails_count = oracle.size - oracle_count
-        fails_sums.append(fails_count)
-        oracle_fails_sums.append(oracle_fails_count)
-    global_success_rate = sum(success_sums) / sum(oracle_success_sums)
-    global_fails_rate = sum(fails_sums) / sum(oracle_fails_sums)
-    return (global_success_rate + 1) / (global_fails_rate + 1)
-
+        fails_sum = np.sum(np.logical_and(np.logical_not(oracle), filtered_image))
+        fails_sums.append(fails_sum)
+    global_success_sum = sum(success_sums)
+    global_fails_sum = sum(fails_sums)
+    return (global_success_sum + 1) / (global_fails_sum + 1)
 
 # prende in input due individui (male, female : due pipeline)
 # e ritorna un individuo risultato della combinazione genetica dei due
