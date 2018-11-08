@@ -1,5 +1,5 @@
 import random
-import p_filters
+import p_filters, ge_config
 from skimage import filters, io, morphology, feature
 from matplotlib import pyplot
 
@@ -11,7 +11,7 @@ io.imshow(s.apply(image))
 pyplot.show()
 '''
 
-random_category = random.choice(p_filters.category_set)
+random_category = random.choice(ge_config.category_set)
 random_filter_class = random.choice(random_category)
 random_filter = random_filter_class()
 

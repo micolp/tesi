@@ -1,4 +1,5 @@
-from p_filters import category_set
+from ge_config import category_set
+
 from skimage import io
 from time import clock, time
 

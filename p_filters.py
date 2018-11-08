@@ -77,13 +77,16 @@ class Pipeline:
 # ----------------------------------------------------------------------------------------------------------------------
 class AbstractFilter:
     def get_description(self):
-        class_name = str(self.__class__).split('.')[-1][:-2]
+        class_name = self.get_filter_name()
         description = class_name
         if self.params.items():
             description += ' with params:'
         for param, value in self.params.items():
             description += "\n\t" + param + ": " + str(value)
         return description
+
+    def get_filter_name(self):
+        return str(self.__class__).split('.')[-1][:-2]
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -374,7 +377,7 @@ class Thin(AbstractFilter):
         self.params['max_iter'] = random.randint(1, 10)
 
 
-#-----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 class Invert(AbstractFilter):
     def __init__(self):
         self.filter = util.invert
@@ -389,13 +392,5 @@ class Invert(AbstractFilter):
         self.params['signed_float'] = random.choice([True, False])
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# SETS
-# ----------------------------------------------------------------------------------------------------------------------
-edge_detector_set = (Sobel, Roberts, Prewitt, Scharr, Canny)
-threshold_set = (ThresholdGlobal, ThresholdGlobal) #, ThresholdLocal)
-morphology_set = (Erode, Dilate, Open, Close, Skeleton)#, Thin
-misc_set = (Laplacian, Gaussian, Invert)# Frangi, Hessian,
 
-category_set = (edge_detector_set, threshold_set, morphology_set, misc_set)
 

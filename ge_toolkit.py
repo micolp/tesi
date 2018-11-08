@@ -3,7 +3,6 @@ from random import choice
 import numpy as np
 from skimage import io
 
-import p_filters
 import ge_config as cfg
 
 
@@ -103,8 +102,14 @@ def load_training_set_final(block_size):
     return training_set
 
 
+training_set_list = {'kittens': load_training_set_kittens,
+                     'scratches_whole': load_training_set_scratches,
+                     'scratches_small': load_training_set_scratches_short,
+                     'scratches_blocks': load_training_set_final}
+
+
 def get_random_filter():
-    random_category = choice(p_filters.category_set)
+    random_category = choice(cfg.category_set)
     random_filter_class = choice(random_category)
     return random_filter_class()
 

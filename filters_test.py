@@ -1,4 +1,4 @@
-from p_filters import category_set
+from ge_config import category_set
 from skimage import io
 
 image = io.imread('images/Kitties.jpg', as_gray=True)

@@ -1,8 +1,6 @@
 from random import randint, choice
-from time import sleep
 
 import numpy as np
-from skimage import io
 from matplotlib import pyplot as plt
 
 from genetic_engine import GeneticEngine
@@ -10,7 +8,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.load_training_set_kittens()
+training_set = tk.training_set_list[cfg.training_set]
 
 
 # crea un individuo casualmente e lo restituisce
@@ -20,7 +18,7 @@ def generate():
     for i in range(pipeline_length - 1):
         pipeline.add_filter(tk.get_random_filter())
     # ogni pipeline ha una soglia come filtro finale
-    pipeline.add_filter(choice(p_filters.threshold_set)())
+    pipeline.add_filter(choice(cfg.threshold_set)())
     return pipeline
 
 
@@ -107,4 +105,7 @@ def show_recap():
         axs[1, 1].imshow(np.logical_and(filtered, example['oracle']), cmap='gray')
         plt.show()
 
+
 show_recap()
+
+
