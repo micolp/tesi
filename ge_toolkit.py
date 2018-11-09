@@ -18,7 +18,7 @@ def load_training_set_kittens():
     oracle_bool[2][7] = True
     # oracle_bool = load_grid()
     # fino a qui
-    # crea matrice di zeri (un'immagine tutta nera della stessa dim dell'immagine originale)
+    # crea matrice di zeri (un'immagine tutta nera della stessa dimensione dell'immagine originale)
     oracle = np.zeros(shape=image.shape).astype(bool)
     square_height = (image.shape[0]) / oracle_bool.shape[0]
     square_width = (image.shape[1]) / oracle_bool.shape[1]
@@ -103,11 +103,55 @@ def load_training_set_final():
     return training_set
 
 
+def load_training_set_daniel():
+    training_set = []
+    image = io.imread("images/02A_orig.bmp")
+    coordinates_scratches = []
+    coordinates_no_scratches = []
+    try:
+        with open("images/02A_orig.oracle") as oracle_02A:
+            coordinates_scratches = oracle_02A.readlines()
+    except FileNotFoundError as e:
+        print(str(e))
+    try:
+        with open("images/no_scratches.oracle") as oracle_no_scratches:
+            coordinates_no_scratches = oracle_no_scratches.readlines()
+    except FileNotFoundError as e:
+        print(str(e))
+    for s in coordinates_scratches:
+        x = s.split(",")[0]
+        y = s.split(",")[1]
+        x = int(x)
+        y = int(y)
+        next_image = image[y - 32:y + 32, x - 32:x + 32]
+
+        scratch = {
+        'image': next_image,
+        'oracle': True
+        }
+        training_set.append(scratch)
+
+    for s in coordinates_no_scratches:
+        x = s.split(",")[0]
+        y = s.split(",")[1]
+        x = int(x)
+        y = int(y)
+        next_image = image[y - 32:y + 32, x - 32:x + 32]
+
+        no_scratch = {
+            'image': next_image,
+            'oracle': False
+        }
+        training_set.append(no_scratch)
+
+    return training_set
+
+
 training_set_list = {'kittens': load_training_set_kittens,
                      'scratches_whole': load_training_set_scratches,
                      'scratches_small': load_training_set_scratches_short,
-                     'scratches_blocks': load_training_set_final}
-
+                     'scratches_blocks': load_training_set_final,
+                     'daniel': load_training_set_daniel}
 
 def get_random_filter():
     random_category = choice(cfg.category_set)

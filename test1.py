@@ -8,7 +8,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.training_set_list[cfg.training_set()]
+training_set = tk.training_set_list[cfg.training_set]()
 
 
 # crea un individuo casualmente e lo restituisce
@@ -36,9 +36,27 @@ def mutate(individual_to_mutate):
     return individual_to_mutate
 
 
+def fitness(individual_to_fit):
+    success_count = 0
+    fails_count = 0
+
+    # training set è una lista di esempi (ogni esempio è (image, oracle))
+    for example in training_set:
+        image = example['image']
+        oracle = ['oracle']  # è true o false
+        filtered_image = individual_to_fit.process(image)
+        # filtered_image = filtered_image.astype(bool)
+        sum = np.sum(filtered_image)
+        if oracle == True:
+            success_count += sum
+        elif oracle == False:
+            fails_count += sum
+    return (success_count - 2*(fails_count))
+
+
 # prende in input un individuo (in questo caso una pipeline) e ritorna un numero.
 # Maggiore è il numero e migliore è l'individuo
-def fitness(individual_to_fit):
+def fitness_old(individual_to_fit):
     fitness_values = []
     success_sums = []
     oracle_success_sums = []
@@ -80,8 +98,8 @@ print("Starting...")
 for i in range(cfg.generation_count):
     print("Current generation: " + str(i))
     ge.evolve(1)
-    print(ge.get_population_grade())
-    print(ge.get_best_individual_fitness())
+    print("Mean fitness: " + str(ge.get_population_grade()))
+    print("Best individual: " + str(ge.get_best_individual_fitness()))
 
 print("Done...")
 

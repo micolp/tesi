@@ -16,7 +16,7 @@ survival_rate = 0.3
 random_selection_rate = 0.1
 mutation_rate = 0.15
 generation_count = 5
-training_set = 'scratches_blocks'
+training_set = 'daniel'
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Paths
