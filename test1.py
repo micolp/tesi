@@ -8,7 +8,7 @@ import p_filters
 import ge_config as cfg
 import ge_toolkit as tk
 
-training_set = tk.training_set_list[cfg.training_set]
+training_set = tk.training_set_list[cfg.training_set()]
 
 
 # crea un individuo casualmente e lo restituisce
@@ -44,7 +44,8 @@ def fitness(individual_to_fit):
     oracle_success_sums = []
     fails_sums = []
     oracle_fails_sums = []
-    for example in training_set: # training set è una lista di esempi (ogni esempio è (image, oracle))
+    # training set è una lista di esempi (ogni esempio è (image, oracle))
+    for example in training_set:
         image = example['image']
         oracle = example['oracle']
         filtered_image = individual_to_fit.process(image)

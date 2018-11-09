@@ -78,8 +78,9 @@ def load_training_set_scratches_short(square_size, i, j):
     return training_set
 
 
-def load_training_set_final(block_size):
+def load_training_set_final():
     training_set = []
+    block_size = 200
     large_training_set = load_training_set_scratches()
     image = large_training_set[0]["image"]
     oracle = large_training_set[0]["oracle"]
