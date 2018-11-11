@@ -3,7 +3,7 @@ from ge_config import category_set
 from skimage import io
 from time import clock, time
 
-image = io.imread('images/Kitties.jpg', as_gray=True)
+image = io.imread('../images/Kitties.jpg', as_gray=True)
 
 supported_input = ("float64", "int32")
 

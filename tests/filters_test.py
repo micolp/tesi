@@ -1,7 +1,7 @@
 from ge_config import category_set
 from skimage import io
 
-image = io.imread('images/Kitties.jpg', as_gray=True)
+image = io.imread('../images/Kitties.jpg', as_gray=True)
 
 supported_input = ("float64", "int32")
 
