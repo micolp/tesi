@@ -238,7 +238,7 @@ class Laplacian(AbstractFilter):
     def __init__(self):
         self.filter = filters.laplace
         self.params = {"ksize": 3, "mask": None}
-        # self.randomize()
+        self.randomize()
 
     def apply(self, image):
         laplacian = self.filter(image, ksize=self.params['ksize'], mask=self.params['mask'])
@@ -253,7 +253,7 @@ class Hessian(AbstractFilter):
     def __init__(self):
         self.filter = filters.hessian
         self.params = {'scale_range': (1, 10), 'scale_step': 2, 'beta1': 0.5, 'beta2': 15 }
-        # self.randomize()
+        self.randomize()
 
     def apply(self, image):
         hessian = self.filter(image, scale_range=self.params['scale_range'], scale_step=self.params['scale_step'],
@@ -367,7 +367,7 @@ class Thin(AbstractFilter):
     def __init__(self):
         self.filter = morphology.thin
         self.params = {'max_iter': None}
-        # self.randomize()
+        self.randomize()
 
     def apply(self, image):
         thin = self.filter(image, max_iter=self.params['max_iter'])
