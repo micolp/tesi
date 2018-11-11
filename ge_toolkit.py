@@ -84,10 +84,10 @@ def load_training_set_final():
     large_training_set = load_training_set_scratches()
     image = large_training_set[0]["image"]
     oracle = large_training_set[0]["oracle"]
-    width = image.shape[1]
-    height = image.shape[0]
-    cols = int(width/block_size)
-    rows = int(height/block_size)
+    # width = image.shape[1]
+    # height = image.shape[0]
+    # cols = int(width/block_size)
+    # rows = int(height/block_size)
     for i in range(5): #(rows):
         for j in range(5): #(cols):
             i_pixel = i * block_size
@@ -126,8 +126,8 @@ def load_training_set_daniel():
         next_image = image[y - 32:y + 32, x - 32:x + 32]
 
         scratch = {
-        'image': next_image,
-        'oracle': True
+            'image': next_image,
+            'oracle': True
         }
         training_set.append(scratch)
 
@@ -152,6 +152,7 @@ training_set_list = {'kittens': load_training_set_kittens,
                      'scratches_small': load_training_set_scratches_short,
                      'scratches_blocks': load_training_set_final,
                      'daniel': load_training_set_daniel}
+
 
 def get_random_filter():
     random_category = choice(cfg.category_set)

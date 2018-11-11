@@ -45,13 +45,13 @@ def fitness(individual_to_fit):
         image = example['image']
         oracle = ['oracle']  # è true o false
         filtered_image = individual_to_fit.process(image)
-        # filtered_image = filtered_image.astype(bool)
+        filtered_image = filtered_image.astype(bool)
         sum = np.sum(filtered_image)
         if oracle == True:
             success_count += sum
         elif oracle == False:
             fails_count += sum
-    return (success_count - 2*(fails_count))
+    return success_count - 2*fails_count
 
 
 # prende in input un individuo (in questo caso una pipeline) e ritorna un numero.
@@ -77,6 +77,7 @@ def fitness_old(individual_to_fit):
     global_success_sum = sum(success_sums)
     global_fails_sum = sum(fails_sums)
     return (global_success_sum + 1) / (global_fails_sum + 1)
+
 
 # prende in input due individui (male, female : due pipeline)
 # e ritorna un individuo risultato della combinazione genetica dei due
@@ -112,14 +113,38 @@ def show_recap():
     for example in training_set:
         fig, axs = plt.subplots(2, 2)
         image = example['image']
+        oracle = example['oracle']
         filtered = best_pipeline.process(image)
         axs[0, 0].imshow(image, cmap='gray')
-        axs[0, 1].imshow(example['oracle'], cmap='gray')
-        axs[1, 0].imshow(filtered, cmap='gray')
-        axs[1, 1].imshow(np.logical_and(filtered, example['oracle']), cmap='gray')
+        axs[0, 1].imshow(filtered, cmap='gray')
+        if oracle:
+            axs[1, 0].imshow(np.ones(shape=(65, 65)), cmap='gray', ndtype=bool)
+        else:
+            axs[1, 0].imshow(np.zeros(shape=(65, 65)), cmap='gray', ndtype=bool)
         plt.show()
 
 
 show_recap()
+
+
+def show_recap_old():
+    print('Retriving best individual of last generation...')
+    best_pipeline = ge.get_best_individual()
+    print('Best individual is:')
+    print(best_pipeline.get_description())
+    for example in training_set:
+        fig, axs = plt.subplots(2, 2)
+        image = example['image']
+        oracle = example['oracle']
+        filtered = best_pipeline.process(image)
+        diff = np.logical_and(filtered, oracle)
+        axs[0, 0].imshow(image, cmap='gray')
+        axs[0, 1].imshow(oracle, cmap='gray')
+        axs[1, 0].imshow(filtered, cmap='gray')
+        axs[1, 1].imshow(diff, cmap='gray')
+        plt.show()
+
+
+
 
 
