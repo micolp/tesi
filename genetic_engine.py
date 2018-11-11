@@ -88,7 +88,7 @@ class GeneticEngine:
 
     def compute_population_fitness(self):
         for individual in self.population:
-            if self.verbose_level >= 3: print(". ", end="")
+            if self.verbose_level >= 3: print(". ", end="", flush=True)
             if individual.fitness_value is None:
                 individual.fitness_value = self.fitness(individual)
         if self.verbose_level >= 3: print("")
