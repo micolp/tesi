@@ -88,8 +88,10 @@ class GeneticEngine:
 
     def compute_population_fitness(self):
         for individual in self.population:
+            if self.verbose_level >= 3: print(". ", end="")
             if individual.fitness_value is None:
                 individual.fitness_value = self.fitness(individual)
+        if self.verbose_level >= 3: print("")
 
     def sort_population_by_fitness(self):
         self.population.sort(key=lambda individual: individual.fitness_value, reverse=True)
