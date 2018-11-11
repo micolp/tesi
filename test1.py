@@ -43,7 +43,7 @@ def fitness(individual_to_fit):
     # training set è una lista di esempi (ogni esempio è (image, oracle))
     for example in training_set:
         image = example['image']
-        oracle = ['oracle']  # è true o false
+        oracle = example['oracle']  # è true o false
         filtered_image = individual_to_fit.process(image)
         filtered_image = filtered_image.astype(bool)
         sum = np.sum(filtered_image)
@@ -118,9 +118,11 @@ def show_recap():
         axs[0, 0].imshow(image, cmap='gray')
         axs[0, 1].imshow(filtered, cmap='gray')
         if oracle:
-            axs[1, 0].imshow(np.ones(shape=(65, 65)), cmap='gray', ndtype=bool)
+            oracle_flag = np.ones(shape=(65, 65)).astype(bool)
+            axs[1, 0].imshow(oracle_flag, cmap='gray')
         else:
-            axs[1, 0].imshow(np.zeros(shape=(65, 65)), cmap='gray', ndtype=bool)
+            oracle_flag = np.zeros(shape=(65, 65)).astype(bool)
+            axs[1, 0].imshow(oracle_flag, cmap='gray')
         plt.show()
 
 
