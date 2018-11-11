@@ -1,10 +1,13 @@
-from ge_config import export_config
 import json
 import datetime
 import os
 
+from skimage import io
 
-def export(result):
+from ge_config import export_config
+
+
+def export(result, test_image):
     now = datetime.datetime.now()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -35,3 +38,7 @@ def export(result):
     filepath = os.path.join(current_dir, export_dir, result_filename)
     with open(filepath, 'w') as result_file:
         json.dump(result_list, result_file, indent=4)
+
+    test_image_filename = "test.png"
+    filepath = os.path.join(current_dir, export_dir, test_image_filename)
+    io.imsave(filepath, test_image*255)

@@ -1,3 +1,5 @@
+from skimage import io
+
 from genetic_engine import GeneticEngine
 from genetic_functions_definitions import generate, mutate, fitness, crossover, training_set
 import ge_config as cfg
@@ -12,7 +14,12 @@ ge = GeneticEngine(generate, mutate, fitness, crossover,
 
 print("Starting...")
 ge.evolve(cfg.generation_count)
-print("Done...")
+print("Done.")
+print("Applying best pipeline on test image...")
+test_image = io.imread('images/test_image.png', as_gray=True)
+best = ge.get_elite()[0]
+filtered_test = best.process(test_image)
+print(filtered_test.max())
 print("Exporting results...")
-export(ge.get_elite())
-print("done")
+export(ge.get_elite(), filtered_test)
+print("Done.")
