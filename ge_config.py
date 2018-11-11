@@ -6,17 +6,18 @@ import json
 # Pipelines/Filters variables
 # ----------------------------------------------------------------------------------------------------------------------
 pipeline_min_filters = 1
-pipeline_max_filters = 2
+pipeline_max_filters = 10
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Genetic algorithm engine variables
 # ----------------------------------------------------------------------------------------------------------------------
-population_size = 10
+population_size = 100
 survival_rate = 0.3
 random_selection_rate = 0.1
 mutation_rate = 0.15
-generation_count = 1
-training_set = 'daniel'
+generation_count = 20
+training_set = 'scratches'
+verbose_level = 2
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Paths
@@ -64,8 +65,5 @@ def export_config(file_path):
 
     with open(file_path, 'w') as config_file: #'export/ge.config'
         json.dump(genetic_engine, config_file)
-        
-
-# export_config()
 
 
