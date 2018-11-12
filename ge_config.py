@@ -28,9 +28,9 @@ test_image_path = 'images/Kitties_test.jpg'
 # Sets
 # ----------------------------------------------------------------------------------------------------------------------
 edge_detector_set = (pf.Sobel, pf.Roberts, pf.Prewitt, pf.Scharr, pf.Canny)
-threshold_set = (pf.ThresholdGlobal, pf.ThresholdGlobal) #, ThresholdLocal)
+threshold_set = (pf.ThresholdGlobal, pf.ThresholdLocal)
 morphology_set = (pf.Erode, pf.Dilate, pf.Open, pf.Close, pf.Skeleton)#, Thin
-misc_set = (pf.Laplacian, pf.Gaussian, pf.Invert)# Frangi, Hessian,
+misc_set = (pf.Laplacian, pf.Gaussian, pf.Invert, pf.Hessian)# Frangi
 
 category_set = (edge_detector_set, threshold_set, morphology_set, misc_set)
 

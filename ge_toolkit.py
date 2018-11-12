@@ -57,7 +57,6 @@ training_set_list = {
 
 
 def filtered_tile_by_tile(pipeline, image):
-    tile_size = 65
     filtered_image = np.zeros(shape=image.shape)
     xs = [32 + i * 54 for i in range(37)]
     ys = [32 + i * 54 for i in range(37)]

@@ -43,7 +43,7 @@ class GeneticEngine:
             if verbose >= 1: print("Current generation: " + str(self.generation_count))
             if verbose >= 1: print("----------------------------------------------------------------------------------")
             if verbose >= 2: print("Population size:" + str(self.population_size))
-            if verbose >= 2: print("Calculating individuals fitness...")
+            if verbose >= 2: print("Calculating individual's fitnesses...")
             self.compute_population_fitness()
 
             if verbose >= 1: print("Mean population fitness is: " + str(sum([individual.fitness_value for
@@ -56,8 +56,8 @@ class GeneticEngine:
             parents = self.population[0:survived_population_size]
             if verbose >= 1: print("Best individual fitness is: " + str(parents[0].fitness_value))
 
-            if verbose >= 2: print("Randomly add other individuals in elite to promote genetic diversity...\n"
-                                   "Chanses to be added are: " + str(self.random_selection_rate))
+            if verbose >= 2: print("Randomly add other individuals to elite to promote genetic diversity...\n"
+                                   "Chances to be added are: " + str(self.random_selection_rate))
             for individual in self.population[survived_population_size:]:
                 if self.random_selection_rate > random():
                     parents.append(individual)
