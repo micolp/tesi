@@ -14,7 +14,7 @@ population_size = 10
 survival_rate = 0.3
 random_selection_rate = 0.1
 mutation_rate = 0.2
-generation_count = 1
+exporting_gap = 5
 training_set = 'scratches'
 verbose_level = 3
 
@@ -54,8 +54,7 @@ def export_config():
                                             'population-size': population_size,
                                             'survival-rate': survival_rate,
                                             'random-selection-rate': random_selection_rate,
-                                            'mutation-rate': mutation_rate,
-                                            'generation-count': generation_count},
+                                            'mutation-rate': mutation_rate},
                       'sets': {'used-categories': category_set_names,
                                'used-edge-detectors': edge_detector_filters_names,
                                'used-thresholds': threshold_set_filters_names,

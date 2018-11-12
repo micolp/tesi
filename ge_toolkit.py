@@ -4,6 +4,8 @@ from skimage import io
 
 import ge_config as cfg
 
+import numpy as np
+
 
 def load_training_set_scratches():
     training_set = []
@@ -52,6 +54,20 @@ def load_training_set_scratches():
 training_set_list = {
                      'scratches': load_training_set_scratches
                     }
+
+
+def filtered_tile_by_tile(pipeline, image):
+    tile_size = 65
+    filtered_image = np.zeros(shape=image.shape)
+    xs = [32 + i * 54 for i in range(37)]
+    ys = [32 + i * 54 for i in range(37)]
+    for x in xs:
+        for y in ys:
+            tile = image[y - 32:y + 32, x - 32:x + 32]
+            filtered_tile = pipeline.process(tile)
+            filtered_image[y - 32:y + 32, x - 32:x + 32] = filtered_tile
+
+    return filtered_image
 
 
 def get_random_filter():

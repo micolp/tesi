@@ -7,7 +7,7 @@ from skimage import io
 from ge_config import export_config
 
 
-def export(result, test_image):
+def export(result, test_image, generation_count, filtered_tiled):
     now = datetime.datetime.now()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -24,6 +24,7 @@ def export(result, test_image):
     for individual in result:
         pipeline = individual.filters_list
         pipeline_dict = {
+            "generation-count": generation_count,
             "fitness": str(individual.fitness_value),
             "pipeline": []
         }
@@ -42,3 +43,7 @@ def export(result, test_image):
     test_image_filename = "test.png"
     filepath = os.path.join(current_dir, export_dir, test_image_filename)
     io.imsave(filepath, test_image*255)
+
+    test_tiled_image_filename = "test_tile.png"
+    filepath = os.path.join(current_dir, export_dir, test_tiled_image_filename)
+    io.imsave(filepath, filtered_tiled)

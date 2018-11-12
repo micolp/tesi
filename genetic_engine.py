@@ -21,6 +21,7 @@ class GeneticEngine:
         self.survival_rate = survival_rate
         self.random_selection_rate = random_selection_rate
         self.mutation_rate = mutation_rate
+        self.generation_count = 0
         # Crea una popolazione di individui casualmente
         self.population = [self.generate() for i in range(self.population_size)]
         # Assegna un valore di fitness nullo ad ogni individuo
@@ -36,10 +37,10 @@ class GeneticEngine:
         faccio riprodurre gli individui sopravvissuti
         applico delle mutazioni casuali agli individui appena generati
     '''
-    def evolve(self, generation_count):
+    def evolve(self, generations_to_iterate):
         verbose = self.verbose_level
-        for g in range(generation_count):
-            if verbose >= 1: print("Current generation: " + str(g))
+        for g in range(generations_to_iterate):
+            if verbose >= 1: print("Current generation: " + str(self.generation_count))
             if verbose >= 1: print("----------------------------------------------------------------------------------")
             if verbose >= 2: print("Population size:" + str(self.population_size))
             if verbose >= 2: print("Calculating individuals fitness...")
@@ -84,6 +85,7 @@ class GeneticEngine:
                     children[i].fitness_value = None
 
             self.population = parents + children
+            self.generation_count += 1
             if verbose >= 1: print("----------------------------------------------------------------------------------")
 
     def compute_population_fitness(self):
