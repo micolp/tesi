@@ -22,5 +22,9 @@ while True:
     filtered_test = best.process(test_image)
     filtered_test_tiled = tk.filtered_tile_by_tile(best, test_image)
     print("Exporting results...")
-    export(ge.get_elite(), filtered_test, ge.generation_count, filtered_test_tiled)
+    try:
+        export(ge.get_elite(), filtered_test, ge.generation_count, filtered_test_tiled)
+    except Exception as error:
+        print("An error occurred while exporting results:")
+        print(str(error))
     print("Export done.")
