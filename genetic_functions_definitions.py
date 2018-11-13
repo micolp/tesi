@@ -51,7 +51,7 @@ def fitness(individual_to_fit):
             success_count += sum
         elif oracle == False:
             fails_count += sum
-    return success_count - 2*fails_count
+    return cfg.success_weight * success_count - cfg.fails_weight * fails_count
 
 
 # prende in input due individui (male, female : due pipeline)
