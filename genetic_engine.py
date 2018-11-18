@@ -1,5 +1,7 @@
 from random import random
 from random import randint
+import ge_config as cfg
+from logger import log
 
 
 class GeneticEngine:
@@ -12,7 +14,7 @@ class GeneticEngine:
                  survival_rate=0.2,  #numero individui migliori da usare come genitori per gen successiva
                  random_selection_rate=0.05,  #prob di sopravvivenza di individuo non di elite
                  mutation_rate=0.01,  #prob di mutazione casuale per ogni individuo di elite
-                 verbose_level=0):
+                 ):
         self.generate = generate
         self.mutate = mutate
         self.fitness = fitness
@@ -27,7 +29,6 @@ class GeneticEngine:
         # Assegna un valore di fitness nullo ad ogni individuo
         for individual in self.population:
             individual.fitness_value = None
-        self.verbose_level = verbose_level
 
     '''
     per ogni generazione:
@@ -38,31 +39,31 @@ class GeneticEngine:
         applico delle mutazioni casuali agli individui appena generati
     '''
     def evolve(self, generations_to_iterate):
-        verbose = self.verbose_level
+        verbose = cfg.verbose_level
         for g in range(generations_to_iterate):
-            if verbose >= 1: print("Current generation: " + str(self.generation_count))
-            if verbose >= 1: print("----------------------------------------------------------------------------------")
-            if verbose >= 2: print("Population size:" + str(self.population_size))
-            if verbose >= 2: print("Calculating individual's fitnesses...")
+            log("Current generation: " + str(self.generation_count), 1)
+            log("----------------------------------------------------------------------------------", 1)
+            log("Population size:" + str(self.population_size), 2)
+            log("Calculating individual's fitnesses...", 2)
             self.compute_population_fitness()
 
-            if verbose >= 1: print("Mean population fitness is: " + str(sum([individual.fitness_value for
+            log("Mean population fitness is: " + str(sum([individual.fitness_value for
                                                                         individual in
-                                                                        self.population])/len(self.population)))
-            if verbose >= 2: print("Selecting elite individuals...\n"
-                                   "Survival rate is: " + str(self.survival_rate))
+                                                                        self.population])/len(self.population)), 1)
+            log("Selecting elite individuals...\n"
+                                   "Survival rate is: " + str(self.survival_rate), 2)
             self.sort_population_by_fitness()
             survived_population_size = int(len(self.population) * self.survival_rate)
             parents = self.population[0:survived_population_size]
-            if verbose >= 1: print("Best individual fitness is: " + str(parents[0].fitness_value))
+            log("Best individual fitness is: " + str(parents[0].fitness_value), 1)
 
-            if verbose >= 2: print("Randomly add other individuals to elite to promote genetic diversity...\n"
-                                   "Chances to be added are: " + str(self.random_selection_rate))
+            log("Randomly add other individuals to elite to promote genetic diversity...\n"
+                                   "Chances to be added are: " + str(self.random_selection_rate), 2)
             for individual in self.population[survived_population_size:]:
                 if self.random_selection_rate > random():
                     parents.append(individual)
 
-            if verbose >= 2: print("Coupling elite individuals...")
+            log("Coupling elite individuals...", 2)
             # crossover parents to create children
             parents_length = len(parents)
             desired_length = len(self.population) - parents_length
@@ -77,8 +78,8 @@ class GeneticEngine:
                     child.fitness_value = None
                     children.append(child)
 
-            if verbose >= 2: print("Randomly mutate some children to promote genetic diversity...\n"
-                                   "Chances to mutate are: " + str(self.mutation_rate))
+            log("Randomly mutate some children to promote genetic diversity...\n"
+                                   "Chances to mutate are: " + str(self.mutation_rate), 2)
             for i in range(len(children)):
                 if self.mutation_rate > random():
                     children[i] = self.mutate(children[i])
@@ -86,14 +87,14 @@ class GeneticEngine:
 
             self.population = parents + children
             self.generation_count += 1
-            if verbose >= 1: print("----------------------------------------------------------------------------------")
+            log("----------------------------------------------------------------------------------", 1)
 
     def compute_population_fitness(self):
         for individual in self.population:
-            if self.verbose_level >= 3: print(". ", end="", flush=True)
+            if cfg.verbose_level >= 3: print(". ", end="", flush=True)
             if individual.fitness_value is None:
                 individual.fitness_value = self.fitness(individual)
-        if self.verbose_level >= 3: print("")
+        if cfg.verbose_level >= 3: print("")
 
     def sort_population_by_fitness(self):
         self.population.sort(key=lambda individual: individual.fitness_value, reverse=True)

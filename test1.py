@@ -11,7 +11,7 @@ ge = GeneticEngine(generate, mutate, fitness, crossover,
                    survival_rate=cfg.survival_rate,
                    random_selection_rate=cfg.random_selection_rate,
                    mutation_rate=cfg.mutation_rate,
-                   verbose_level=cfg.verbose_level)
+                   )
 
 print("Starting...")
 test_image = io.imread('images/test_image.png', as_gray=True)
