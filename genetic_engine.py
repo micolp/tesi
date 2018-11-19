@@ -6,14 +6,22 @@ from ge_toolkit import log
 
 class GeneticEngine:
     def __init__(self,
-                 generate,  #crea individui pop iniziale
-                 mutate,  #crea mutazione genetica casuale
-                 fitness,  #valore più alto = individuo migliore
-                 breed,  #crea individui gen successive a partire da madre e padre
-                 population_size=100,  #numero individui
-                 survival_rate=0.2,  #numero individui migliori da usare come genitori per gen successiva
-                 random_selection_rate=0.05,  #prob di sopravvivenza di individuo non di elite
-                 mutation_rate=0.01,  #prob di mutazione casuale per ogni individuo di elite
+                 # creates individuals of the initial population
+                 generate,
+                 # creates random genetic mutation
+                 mutate,
+                 # higher value = better individual
+                 fitness,
+                 # creates individuals of the next generations starting from mother and father
+                 breed,
+                 # number of individuals
+                 population_size=100,
+                 # number of best individuals to use as parents for the next generation
+                 survival_rate=0.2,
+                 # probability of survival of a not élite individual
+                 random_selection_rate=0.05,
+                 # probability of random mutation for each élite individual
+                 mutation_rate=0.01,
                  ):
         self.generate = generate
         self.mutate = mutate
@@ -24,27 +32,26 @@ class GeneticEngine:
         self.random_selection_rate = random_selection_rate
         self.mutation_rate = mutation_rate
         self.generation_count = 0
-        # Crea una popolazione di individui casualmente
+        # Creates a random population of individuals
         self.population = [self.generate() for i in range(self.population_size)]
-        # Assegna un valore di fitness nullo ad ogni individuo
+        # Assigns a null fitness value to each individual
         for individual in self.population:
             individual.fitness_value = None
 
     '''
-    per ogni generazione:
-        calcolo la fitness della mia popolazione
-        seleziono una percentuale di individui da far sopravvivere in base alla fitness
-        aggiungo casualmente elementi presi da quelli da scartare per aggiungere varietà genetica
-        faccio riprodurre gli individui sopravvissuti
-        applico delle mutazioni casuali agli individui appena generati
+    for each generation:
+        calculate the population fitness
+        select a percentage of individuals to survive based on fitness
+        add random elements from those unwrapped to add genetic diversity
+        breed the surviving individuals
+        apply random mutations to newly generated individuals
     '''
     def evolve(self, generations_to_iterate):
-        verbose = cfg.verbose_level
         for g in range(generations_to_iterate):
             log("Current generation: " + str(self.generation_count), 1)
             log("----------------------------------------------------------------------------------", 1)
             log("Population size:" + str(self.population_size), 2)
-            log("Calculating individual's fitnesses...", 2)
+            log("Calculating individual's fitness...", 2)
             self.compute_population_fitness()
 
             log("Mean population fitness is: " + str(sum([individual.fitness_value for
@@ -63,7 +70,7 @@ class GeneticEngine:
                 if self.random_selection_rate > random():
                     parents.append(individual)
 
-            log("Coupling elite individuals...", 2)
+            log("Breeding elite individuals...", 2)
             # crossover parents to create children
             parents_length = len(parents)
             desired_length = len(self.population) - parents_length
@@ -89,6 +96,7 @@ class GeneticEngine:
             self.generation_count += 1
             log("----------------------------------------------------------------------------------", 1)
 
+    # prints a dot for each computed individual
     def compute_population_fitness(self):
         for individual in self.population:
             if cfg.verbose_level >= 3: print(". ", end="", flush=True)

@@ -4,7 +4,40 @@ import os
 
 from skimage import io
 
-from ge_config import export_config
+import ge_config as cfg
+
+
+def export_config():
+    # create a list with all the names starting from the filter list
+    edge_detector_filters_names = [filter().get_filter_name() for filter in cfg.edge_detector_set]
+    threshold_set_filters_names = [filter().get_filter_name() for filter in cfg.threshold_set]
+    morphology_set_filters_names = [filter().get_filter_name() for filter in cfg.morphology_set]
+    misc_set_filters_names = [filter().get_filter_name() for filter in cfg.misc_set]
+    category_set_names = []
+
+    for category in cfg.category_set:
+        for variable, value in globals().items():
+            if category == value:
+                category_set_names.append(variable)
+
+    genetic_engine = {'pipelines': {'min-size': cfg.pipeline_min_filters,
+                                    'max-size': cfg.pipeline_max_filters},
+                      'genetic-algorithm': {'training-set': cfg.training_set,
+                                            'population-size': cfg.population_size,
+                                            'survival-rate': cfg.survival_rate,
+                                            'random-selection-rate': cfg.random_selection_rate,
+                                            'mutation-rate': cfg.mutation_rate},
+                      'fitness-values': {
+                          'success-weight': cfg.success_weight,
+                          'fails-weight': cfg.fails_weight,
+                      },
+                      'sets': {'used-categories': category_set_names,
+                               'used-edge-detectors': edge_detector_filters_names,
+                               'used-thresholds': threshold_set_filters_names,
+                               'used-morphology': morphology_set_filters_names,
+                               'used-misc': misc_set_filters_names}}
+
+    return genetic_engine
 
 
 def export(result, test_image, generation_count, filtered_tiled):
@@ -47,3 +80,4 @@ def export(result, test_image, generation_count, filtered_tiled):
     test_tiled_image_filename = "test_tile.png"
     filepath = os.path.join(current_dir, export_dir, test_tiled_image_filename)
     io.imsave(filepath, filtered_tiled)
+

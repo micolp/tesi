@@ -48,14 +48,14 @@ class Pipeline:
     def get_length(self):
         return len(self.filters_list)
 
-    # index: da quale indice partire - offset: lunghezza subpipe
+    # index: from which index to start - offset: subpipeline length
     def get_subpipeline(self, index, offset=None):
         result = Pipeline()
         if offset:
             result.filters_list = self.filters_list[index:index+offset]
         else:
             result.filters_list = self.filters_list[index:]
-        # ritorna pipeline da: index, di lunghezza offset
+        # returns pipeline from: index, length:offset
         return result
 
     def get_description(self):
@@ -65,7 +65,7 @@ class Pipeline:
             description += "--------------------\n"
         return description
 
-    # override di add (+) per istanze di Pipeline
+    # add (+) override for Pipeline instances
     def __add__(self, pipeline):
         result = Pipeline()
         result.filters_list = self.filters_list + pipeline.filters_list
