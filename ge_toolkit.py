@@ -1,9 +1,6 @@
 from random import choice
-
 from skimage import io
-
 import ge_config as cfg
-
 import numpy as np
 
 
@@ -74,5 +71,10 @@ def get_random_filter():
     random_filter_class = choice(random_category)
 
     return random_filter_class()
+
+
+def log(message, verbose_level):
+    if verbose_level <= cfg.verbose_level:
+        print(message)
 
 

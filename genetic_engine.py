@@ -1,7 +1,7 @@
 from random import random
 from random import randint
 import ge_config as cfg
-from logger import log
+from ge_toolkit import log
 
 
 class GeneticEngine:
