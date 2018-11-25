@@ -4,16 +4,16 @@ import p_filters as pf
 # Pipelines/Filters variables
 # ----------------------------------------------------------------------------------------------------------------------
 pipeline_min_filters = 1
-pipeline_max_filters = 2
+pipeline_max_filters = 10
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Genetic algorithm engine variables
 # ----------------------------------------------------------------------------------------------------------------------
-population_size = 20
+population_size = 200
 survival_rate = 0.3
 random_selection_rate = 0.1
 mutation_rate = 0.2
-exporting_gap = 5
+exporting_gap = 1
 training_set = 'scratches'
 verbose_level = 3
 

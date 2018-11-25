@@ -16,8 +16,6 @@ oracle_negatives_filename = "images/test_oracle_negatives.coords"
 with open(oracle_negatives_filename, 'r') as oracle_negatives_file:
     oracle_negatives = oracle_negatives_file.readlines()
 
-
-
 def export_config():
     # create a list with all the names starting from the filter list
     edge_detector_filters_names = [filter().get_filter_name() for filter in cfg.edge_detector_set]
@@ -152,7 +150,7 @@ def export(result, test_image, generation_count, filtered_tiled, positives_negat
         for false_negative in false_negatives:
             false_negatives_file.write(false_negative)
 
-    result_filename = "reacap.txt"
+    result_filename = "recap.txt"
     filepath = os.path.join(current_dir, export_dir, result_filename)
     with open(filepath, 'w') as recap_file:
         recap_file.write('oracle_positives: ' + str(len(oracle_positives)) + '\n')
