@@ -20,10 +20,17 @@ while True:
     print("Applying best pipeline on test image...")
     best = ge.get_elite()[0]
     filtered_test = best.process(test_image)
-    filtered_test_tiled = tk.filtered_tile_by_tile(best, test_image)
+    filtered_test = filtered_test.astype(bool)
+    filtered_test_tiled, positives_negatives_image, positives, negatives = tk.filtered_tile_by_tile(best, test_image)
     print("Exporting results...")
     try:
-        export(ge.get_elite(), filtered_test, ge.generation_count, filtered_test_tiled)
+        export(ge.get_elite(),
+               filtered_test,
+               ge.generation_count,
+               filtered_test_tiled,
+               positives_negatives_image,
+               positives,
+               negatives)
     except Exception as error:
         print("An error occurred while exporting results:")
         print(str(error))

@@ -6,6 +6,17 @@ from skimage import io
 
 import ge_config as cfg
 
+oracle_positives = []
+oracle_positives_filename = "images/test_oracle_positives.coords"
+with open(oracle_positives_filename, 'r') as oracle_positives_file:
+    oracle_positives = oracle_positives_file.readlines()
+
+oracle_negatives = []
+oracle_negatives_filename = "images/test_oracle_negatives.coords"
+with open(oracle_negatives_filename, 'r') as oracle_negatives_file:
+    oracle_negatives = oracle_negatives_file.readlines()
+
+
 
 def export_config():
     # create a list with all the names starting from the filter list
@@ -40,11 +51,11 @@ def export_config():
     return genetic_engine
 
 
-def export(result, test_image, generation_count, filtered_tiled):
+def export(result, test_image, generation_count, filtered_tiled, positives_negatives_image, positives, negatives):
     now = datetime.datetime.now()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    subdir_name = now.strftime("export_%Y-%m-%d_%H-%M-%S/")
+    subdir_name = now.strftime("export_%Y-%m-%d_%H-%M-%S" + str(generation_count) + "/")
     export_dir = "exports/" + subdir_name
     config_filename = "genetic_engine_parameters.json"
     filepath = os.path.join(current_dir, export_dir, config_filename)
@@ -81,3 +92,72 @@ def export(result, test_image, generation_count, filtered_tiled):
     filepath = os.path.join(current_dir, export_dir, test_tiled_image_filename)
     io.imsave(filepath, filtered_tiled)
 
+    positives_negatives_filename = "positives_negatives.png"
+    filepath = os.path.join(current_dir, export_dir, positives_negatives_filename)
+    io.imsave(filepath, positives_negatives_image)
+
+    result_filename = "positives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as positives_file:
+        for positive in positives:
+            positives_file.write(str(positive['x'])+','+str(positive['y']) + '\n')
+
+    with open(filepath, 'r') as positives_file:
+        test_positives = positives_file.readlines()
+    real_positives = []
+    false_positives = []
+    for test_positive in test_positives:
+        if test_positive in oracle_positives:
+            real_positives.append(test_positive)
+        else:
+            false_positives.append(test_positive)
+
+    result_filename = "negatives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as negatives_file:
+        for negative in negatives:
+            negatives_file.write(str(negative['x']) + ',' + str(negative['y']) + '\n')
+
+    with open(filepath, 'r') as negatives_file:
+        test_negatives = negatives_file.readlines()
+    real_negatives = []
+    false_negatives = []
+    for test_negative in test_negatives:
+        if test_negative in oracle_negatives:
+            real_negatives.append(test_negative)
+        else:
+            false_negatives.append(test_negative)
+
+    result_filename = "real_positives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as real_positives_file:
+        for real_positive in real_positives:
+            real_positives_file.write(real_positive)
+
+    result_filename = "false_positives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as false_positives_file:
+        for false_positive in false_positives:
+            false_positives_file.write(false_positive)
+
+    result_filename = "real_negatives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as real_negatives_file:
+        for real_negative in real_negatives:
+            real_negatives_file.write(real_negative)
+
+    result_filename = "false_negatives.coords"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as false_negatives_file:
+        for false_negative in false_negatives:
+            false_negatives_file.write(false_negative)
+
+    result_filename = "reacap.txt"
+    filepath = os.path.join(current_dir, export_dir, result_filename)
+    with open(filepath, 'w') as recap_file:
+        recap_file.write('oracle_positives: ' + str(len(oracle_positives)) + '\n')
+        recap_file.write('oracle_negatives: ' + str(len(oracle_negatives)) + '\n')
+        recap_file.write('real_positives: ' + str(len(real_positives)) + '\n')
+        recap_file.write('false_positives: ' + str(len(false_positives)) + '\n')
+        recap_file.write('real_negatives: ' + str(len(real_negatives)) + '\n')
+        recap_file.write('false_negatives: ' + str(len(false_negatives)) + '\n')

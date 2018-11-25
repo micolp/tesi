@@ -2,49 +2,25 @@ from random import choice
 from skimage import io
 import ge_config as cfg
 import numpy as np
+from os import listdir
 
 
 def load_training_set_scratches():
     training_set = []
-    image = io.imread("images/02A_orig.bmp")
-    coordinates_scratches = []
-    coordinates_no_scratches = []
-    try:
-        with open("images/02A_orig.oracle") as oracle_02A:
-            coordinates_scratches = oracle_02A.readlines()
-    except FileNotFoundError as e:
-        print(str(e))
-    try:
-        with open("images/no_scratches.oracle") as oracle_no_scratches:
-            coordinates_no_scratches = oracle_no_scratches.readlines()
-    except FileNotFoundError as e:
-        print(str(e))
-    for s in coordinates_scratches:
-        x = s.split(",")[0]
-        y = s.split(",")[1]
-        x = int(x)
-        y = int(y)
-        next_image = image[y - 32:y + 32, x - 32:x + 32]
-
-        scratch = {
-            'image': next_image,
+    positives_image_files = listdir('images/positives')
+    negatives_image_files = listdir('images/negatives')
+    for positives_image_file in positives_image_files:
+        tile = io.imread("images/positives/" + positives_image_file)
+        training_set.append({
+            'image': tile,
             'oracle': True
-        }
-        training_set.append(scratch)
-
-    for s in coordinates_no_scratches:
-        x = s.split(",")[0]
-        y = s.split(",")[1]
-        x = int(x)
-        y = int(y)
-        next_image = image[y - 32:y + 32, x - 32:x + 32]
-
-        no_scratch = {
-            'image': next_image,
+        })
+    for negatives_image_file in negatives_image_files:
+        tile = io.imread("images/negatives/" + negatives_image_file)
+        training_set.append({
+            'image': tile,
             'oracle': False
-        }
-        training_set.append(no_scratch)
-
+        })
     return training_set
 
 
@@ -55,15 +31,24 @@ training_set_list = {
 
 def filtered_tile_by_tile(pipeline, image):
     filtered_image = np.zeros(shape=image.shape)
+    positive_negative_image = np.zeros(shape=image.shape)
     xs = [32 + i * 54 for i in range(37)]
     ys = [32 + i * 54 for i in range(37)]
+    positives = []
+    negatives = []
     for x in xs:
         for y in ys:
             tile = image[y - 32:y + 32, x - 32:x + 32]
             filtered_tile = pipeline.process(tile)
+            if np.sum(filtered_tile)/filtered_tile.size >= 0.5:
+                positives.append({'x': x, 'y': y})
+                positive_negative_image[y - 32:y + 32, x - 32:x + 32] = 1
+            else:
+                negatives.append({'x': x, 'y': y})
+                positive_negative_image[y - 32:y + 32, x - 32:x + 32] = 0
             filtered_image[y - 32:y + 32, x - 32:x + 32] = filtered_tile
 
-    return filtered_image
+    return filtered_image, positive_negative_image, positives, negatives
 
 
 def get_random_filter():
